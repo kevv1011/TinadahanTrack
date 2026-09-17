@@ -5,6 +5,38 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 21:44] — Session 12: Skeleton Loaders, Counter Animations & Button Micro-Interactions
+
+**Summary:** Added three frontend-only UI polishes: shimmer skeleton cards during loading, a count-up animation on dashboard stats, and tactile `:active` press feedback on all buttons.
+
+### 🆕 Files Created
+
+| File | Contents |
+|------|---------|
+| `src/components/atoms/SkeletonCard.jsx` | Renders empty placeholder divs that mirror the `ProductCard` layout. Uses `aria-hidden="true"`. No props required. |
+
+### ✏️ Files Modified
+
+#### `src/components/molecules/SummaryCard.jsx`
+- Added `useEffect` + `useState` counter animation that counts from `0` → `value` over ~500ms (30 steps) on mount
+- Non-numeric values (e.g. strings) pass through unchanged
+
+#### `src/pages/InventoryPage.jsx`
+- Imported `SkeletonCard`
+- When `isLoading` is `true`, renders a `<div className="product-grid">` containing 6 `<SkeletonCard />` components instead of a plain "Loading…" paragraph
+- Added `aria-busy="true"` on the skeleton grid for accessibility
+
+#### `src/styles.css`
+- **`.btn` base** — added `transform` to the `transition` shorthand so `:active` scale is animated
+- **`.btn--primary:active`** / **`.btn--secondary:active`** — `transform: scale(0.96); opacity: 0.85` for tactile click feedback
+- **`@keyframes shimmer`** — slides a `linear-gradient` from `-200px` to `200px` over 1.4s (infinite loop)
+- **`.skeleton-card`** — `pointer-events: none; user-select: none`
+- **`.skeleton-card__line`** / `__badge` / `__btn` — shared shimmer background, sized to match their real counterparts (`--short`: 45% width, `--medium`: 75%, badge: `60px` pill, btn: `34px` height)
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-17 · 21:35] — Session 11: Custom Logo Integration
 
 **Summary:** Integrated a custom TindahanTrack logo (`logo.jpg`) into the browser favicon and the app header.

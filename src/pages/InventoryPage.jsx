@@ -5,6 +5,7 @@ import Header from '../components/organisms/Header';
 import BottomNav from '../components/organisms/BottomNav';
 import ProductGrid from '../components/organisms/ProductGrid';
 import CategoryPill from '../components/atoms/CategoryPill';
+import SkeletonCard from '../components/atoms/SkeletonCard';
 import { useState } from 'react';
 
 export default function InventoryPage({ items = [], isLoading, onUpdateStock }) {
@@ -60,9 +61,13 @@ export default function InventoryPage({ items = [], isLoading, onUpdateStock }) 
           </div>
         </div>
 
-        {/* ── Product grid ── */}
+        {/* ── Product grid or skeleton loaders ── */}
         {isLoading ? (
-          <p className="loading">Loading...</p>
+          <div className="product-grid" aria-busy="true" aria-label="Loading products">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
         ) : (
           <>
             {filtered.length === 0 && !isLoading && (
