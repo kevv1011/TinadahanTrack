@@ -5,6 +5,31 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 15:20] — Session 9: Workspace Restructuring & Course Compliance
+
+**Summary:** Restructured the workspace folders for final submission layout and removed PII (the LICENSE file).
+
+### 📁 Moved / Directories Created
+
+| From | To |
+|------|----|
+| `final-project-planning/report-week-1.md` | `project/REPORT.md` (new directory) |
+| `final-project-planning/journal-week-1.md` | `journal/week-1.md` (new directory) |
+
+### 🆕 Files Created
+
+| File | Contents |
+|------|---------|
+| `project/README.md` | Final Project template with placeholders for repository link, live app, and presentation materials. |
+
+### ❌ Files Deleted
+
+| File | Notes |
+|------|-------|
+| `LICENSE` | Deleted to ensure anonymity for course compliance. |
+
+---
+
 ## [2026-09-17 · 15:06] — Session 8: MIT License & Final Git Push
 
 **Summary:** Added a standard MIT License to the repository and pushed all Week 1 files to GitHub.
