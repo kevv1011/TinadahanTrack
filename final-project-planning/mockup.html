@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TindahanTrack — UI Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --color-primary: #A81F78;
+      --color-accent:  #EF4444;
+      --color-bg:      #F3F4F6;
+      --color-surface: #FFFFFF;
+      --color-text:    #1F2937;
+      --color-text-muted: #6B7280;
+      --font: 'Inter', system-ui, sans-serif;
+      --radius-sm: 6px; --radius-md: 12px; --radius-lg: 20px; --radius-full: 9999px;
+      --shadow-card: 0 1px 4px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+      --shadow-fab:  0 4px 12px rgba(168,31,120,.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: #E5E7EB; display: flex; gap: 40px; justify-content: center; align-items: flex-start; padding: 40px 24px; flex-wrap: wrap; min-height: 100vh; }
+
+    /* ── Phone frame ── */
+    .phone-frame { background: #1F2937; border-radius: 44px; padding: 14px; box-shadow: 0 25px 60px rgba(0,0,0,.35); width: 375px; flex-shrink: 0; }
+    .phone-screen { background: var(--color-bg); border-radius: 32px; overflow: hidden; height: 780px; display: flex; flex-direction: column; position: relative; }
+    .phone-label { color: #9CA3AF; font-family: var(--font); font-size: 11px; font-weight: 500; text-align: center; margin-top: 10px; letter-spacing: .08em; text-transform: uppercase; }
+
+    /* ── Desktop frame ── */
+    .desktop-frame { background: #374151; border-radius: 16px; padding: 12px 12px 28px; box-shadow: 0 25px 60px rgba(0,0,0,.3); }
+    .desktop-screen { background: var(--color-bg); border-radius: 8px; overflow: hidden; width: 900px; min-height: 600px; display: flex; flex-direction: column; }
+    .desktop-bar { height: 8px; background: #4B5563; border-radius: 4px; margin-bottom: 8px; width: 60px; margin-left: auto; margin-right: auto; }
+
+    /* ── Header ── */
+    .header { background: var(--color-primary); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .header__title { color: #fff; font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+    .header__title span { opacity: .7; font-weight: 400; font-size: 14px; }
+    .header__nav { display: flex; gap: 20px; }
+    .header__nav a { color: rgba(255,255,255,.75); font-size: 13px; font-weight: 500; text-decoration: none; transition: color .15s; }
+    .header__nav a:hover, .header__nav a.active { color: #fff; }
+
+    /* ── Main scroll area ── */
+    .main { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+    .main--desktop { padding: 24px 32px; }
+
+    /* ── Summary cards ── */
+    .summary-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .summary-card { background: var(--color-surface); border-radius: var(--radius-md); padding: 16px; box-shadow: var(--shadow-card); }
+    .summary-card__value { font-size: 2rem; font-weight: 700; color: var(--color-primary); line-height: 1; }
+    .summary-card__label { font-size: 12px; color: var(--color-text-muted); margin-top: 4px; font-weight: 500; }
+    .summary-card--accent .summary-card__value { color: var(--color-accent); }
+
+    /* ── Alert list ── */
+    .alert-list { background: var(--color-surface); border-radius: var(--radius-md); box-shadow: var(--shadow-card); overflow: hidden; }
+    .alert-list__heading { padding: 14px 16px 10px; font-size: 13px; font-weight: 700; color: var(--color-accent); display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #F3F4F6; }
+    .alert-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid #F9FAFB; }
+    .alert-row:last-child { border-bottom: none; }
+    .alert-row__name { font-size: 13px; font-weight: 500; color: var(--color-text); }
+    .stock-badge { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: var(--radius-full); background: #FEE2E2; color: var(--color-accent); }
+
+    /* ── CTA button ── */
+    .btn-primary { background: var(--color-primary); color: #fff; font-size: 13px; font-weight: 600; padding: 12px 20px; border-radius: var(--radius-md); border: none; cursor: pointer; text-align: center; display: block; width: 100%; transition: opacity .15s; }
+    .btn-primary:hover { opacity: .9; }
+
+    /* ── Bottom nav ── */
+    .bottom-nav { background: var(--color-surface); border-top: 1px solid #E5E7EB; display: flex; padding: 8px 0 12px; flex-shrink: 0; }
+    .bottom-nav__item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; font-weight: 500; color: var(--color-text-muted); padding: 4px 0; cursor: pointer; }
+    .bottom-nav__item--active { color: var(--color-primary); }
+    .bottom-nav__item .icon { font-size: 18px; }
+
+    /* ── FAB ── */
+    .fab { position: absolute; bottom: 60px; right: 16px; width: 52px; height: 52px; background: var(--color-primary); border-radius: var(--radius-full); border: none; color: #fff; font-size: 26px; line-height: 1; cursor: pointer; box-shadow: var(--shadow-fab); display: flex; align-items: center; justify-content: center; }
+
+    /* ── Product grid ── */
+    .category-pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .category-pills::-webkit-scrollbar { display: none; }
+    .category-pill { background: var(--color-surface); border: 1.5px solid #E5E7EB; border-radius: var(--radius-full); padding: 5px 14px; font-size: 12px; font-weight: 500; white-space: nowrap; color: var(--color-text-muted); cursor: pointer; flex-shrink: 0; }
+    .category-pill--active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .product-grid--desktop { grid-template-columns: repeat(4, 1fr); }
+    .product-card { background: var(--color-surface); border-radius: var(--radius-md); padding: 14px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 6px; }
+    .product-card__category { font-size: 10px; font-weight: 600; color: var(--color-primary); text-transform: uppercase; letter-spacing: .06em; }
+    .product-card__name { font-size: 13px; font-weight: 600; color: var(--color-text); line-height: 1.3; }
+    .product-card__price { font-size: 12px; color: var(--color-text-muted); }
+    .product-card__controls { display: flex; gap: 6px; margin-top: 4px; }
+    .btn-stock { flex: 1; background: #F3F4F6; border: none; border-radius: var(--radius-sm); padding: 6px; font-size: 16px; font-weight: 700; cursor: pointer; color: var(--color-text); }
+
+    /* ── Form ── */
+    .form-card { background: var(--color-surface); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 16px; max-width: 480px; width: 100%; }
+    .form-field { display: flex; flex-direction: column; gap: 6px; }
+    .form-field label { font-size: 12px; font-weight: 600; color: var(--color-text); }
+    .form-field input { border: 1.5px solid #E5E7EB; border-radius: var(--radius-sm); padding: 10px 12px; font-size: 14px; font-family: var(--font); color: var(--color-text); outline: none; transition: border-color .15s; }
+    .form-field input:focus { border-color: var(--color-primary); }
+    .form-field input::placeholder { color: #9CA3AF; }
+
+    /* ── Screen labels ── */
+    .screen-label { font-family: var(--font); font-size: 12px; color: #6B7280; font-weight: 600; text-align: center; margin-bottom: 8px; letter-spacing: .05em; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 1: DASHBOARD (Mobile)
+  ════════════════════════════════════════ -->
+  <div>
+    <p class="screen-label">Screen 1 — Dashboard (Mobile)</p>
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <!-- Header -->
+        <div class="header">
+          <div class="header__title">TindahanTrack <span>by Ate Marie</span></div>
+        </div>
+
+        <!-- Main content -->
+        <div class="main">
+          <!-- Summary cards -->
+          <div class="summary-cards">
+            <div class="summary-card">
+              <div class="summary-card__value">20</div>
+              <div class="summary-card__label">Items Tracked</div>
+            </div>
+            <div class="summary-card summary-card--accent">
+              <div class="summary-card__value">6</div>
+              <div class="summary-card__label">Low Stock Items</div>
+            </div>
+          </div>
+
+          <!-- Alert list -->
+          <div class="alert-list">
+            <div class="alert-list__heading">⚠ Low Stock Alerts</div>
+            <div class="alert-row"><span class="alert-row__name">Chippy BBQ</span><span class="stock-badge">3 left</span></div>
+            <div class="alert-row"><span class="alert-row__name">Mega Sardines</span><span class="stock-badge">4 left</span></div>
+            <div class="alert-row"><span class="alert-row__name">Coca-Cola 1.5L</span><span class="stock-badge">2 left</span></div>
+            <div class="alert-row"><span class="alert-row__name">Royal Orange 1.5L</span><span class="stock-badge">3 left</span></div>
+            <div class="alert-row"><span class="alert-row__name">Scotch Brite Sponge</span><span class="stock-badge">4 left</span></div>
+            <div class="alert-row"><span class="alert-row__name">Eden Cheese</span><span class="stock-badge">5 left</span></div>
+          </div>
+
+          <button class="btn-primary">View Full Inventory →</button>
+        </div>
+
+        <!-- Bottom Nav -->
+        <div class="bottom-nav">
+          <div class="bottom-nav__item bottom-nav__item--active"><span class="icon">🏠</span>Home</div>
+          <div class="bottom-nav__item"><span class="icon">📦</span>Inventory</div>
+          <div class="bottom-nav__item"><span class="icon">➕</span>Add</div>
+        </div>
+      </div>
+      <p class="phone-label">375px · Mobile</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 2: INVENTORY (Mobile)
+  ════════════════════════════════════════ -->
+  <div>
+    <p class="screen-label">Screen 2 — Inventory Grid (Mobile)</p>
+    <div class="phone-frame">
+      <div class="phone-screen" style="position:relative;">
+        <div class="header">
+          <div class="header__title">TindahanTrack</div>
+        </div>
+        <div class="main">
+          <div class="category-pills">
+            <div class="category-pill category-pill--active">All</div>
+            <div class="category-pill">Snacks</div>
+            <div class="category-pill">Canned Goods</div>
+            <div class="category-pill">Beverages</div>
+            <div class="category-pill">Personal Care</div>
+          </div>
+          <div class="product-grid">
+            <div class="product-card">
+              <div class="product-card__category">Snacks</div>
+              <div class="product-card__name">Piattos Cheese</div>
+              <div class="product-card__price">₱15.00</div>
+              <span class="stock-badge" style="background:#D1FAE5;color:#059669;align-self:flex-start;">12 left</span>
+              <div class="product-card__controls"><button class="btn-stock">−</button><button class="btn-stock">+</button></div>
+            </div>
+            <div class="product-card">
+              <div class="product-card__category">Snacks</div>
+              <div class="product-card__name">Chippy BBQ</div>
+              <div class="product-card__price">₱12.00</div>
+              <span class="stock-badge" style="align-self:flex-start;">3 left</span>
+              <div class="product-card__controls"><button class="btn-stock">−</button><button class="btn-stock">+</button></div>
+            </div>
+            <div class="product-card">
+              <div class="product-card__category">Beverages</div>
+              <div class="product-card__name">Milo 3-in-1 Sachet</div>
+              <div class="product-card__price">₱10.00</div>
+              <span class="stock-badge" style="background:#D1FAE5;color:#059669;align-self:flex-start;">30 left</span>
+              <div class="product-card__controls"><button class="btn-stock">−</button><button class="btn-stock">+</button></div>
+            </div>
+            <div class="product-card">
+              <div class="product-card__category">Canned Goods</div>
+              <div class="product-card__name">Mega Sardines</div>
+              <div class="product-card__price">₱18.00</div>
+              <span class="stock-badge" style="align-self:flex-start;">4 left</span>
+              <div class="product-card__controls"><button class="btn-stock">−</button><button class="btn-stock">+</button></div>
+            </div>
+          </div>
+        </div>
+        <!-- FAB -->
+        <button class="fab">+</button>
+        <div class="bottom-nav">
+          <div class="bottom-nav__item"><span class="icon">🏠</span>Home</div>
+          <div class="bottom-nav__item bottom-nav__item--active"><span class="icon">📦</span>Inventory</div>
+          <div class="bottom-nav__item"><span class="icon">➕</span>Add</div>
+        </div>
+      </div>
+      <p class="phone-label">375px · Mobile</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 3: ADD PRODUCT (Mobile)
+  ════════════════════════════════════════ -->
+  <div>
+    <p class="screen-label">Screen 3 — Add Product (Mobile)</p>
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="header" style="gap:12px;">
+          <span style="color:#fff;font-size:18px;cursor:pointer;">←</span>
+          <div class="header__title" style="flex:1;">Add New Product</div>
+        </div>
+        <div class="main" style="align-items:stretch;">
+          <div class="form-card" style="max-width:100%;">
+            <div class="form-field"><label>Product Name</label><input type="text" placeholder="e.g. Piattos Cheese" /></div>
+            <div class="form-field"><label>Category</label><input type="text" placeholder="e.g. Snacks" /></div>
+            <div class="form-field"><label>Price (₱)</label><input type="number" placeholder="0.00" /></div>
+            <div class="form-field"><label>Current Stock</label><input type="number" placeholder="0" /></div>
+            <div class="form-field"><label>Min. Threshold</label><input type="number" placeholder="5" /></div>
+            <button class="btn-primary">Save Product</button>
+          </div>
+        </div>
+      </div>
+      <p class="phone-label">375px · Mobile</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 1: DASHBOARD (Desktop)
+  ════════════════════════════════════════ -->
+  <div style="width:100%;">
+    <p class="screen-label">Screen 1 — Dashboard (Desktop)</p>
+    <div class="desktop-frame">
+      <div class="desktop-bar"></div>
+      <div class="desktop-screen">
+        <div class="header">
+          <div class="header__title">TindahanTrack</div>
+          <nav class="header__nav">
+            <a href="#" class="active">Dashboard</a>
+            <a href="#">Inventory</a>
+            <a href="#">+ Add Item</a>
+          </nav>
+        </div>
+        <div class="main main--desktop">
+          <div class="summary-cards" style="grid-template-columns:repeat(4,1fr);">
+            <div class="summary-card"><div class="summary-card__value">20</div><div class="summary-card__label">Items Tracked</div></div>
+            <div class="summary-card summary-card--accent"><div class="summary-card__value">6</div><div class="summary-card__label">Low Stock Items</div></div>
+            <div class="summary-card"><div class="summary-card__value">₱1,240</div><div class="summary-card__label">Est. Stock Value</div></div>
+            <div class="summary-card"><div class="summary-card__value">5</div><div class="summary-card__label">Categories</div></div>
+          </div>
+          <div class="alert-list">
+            <div class="alert-list__heading">⚠ Low Stock Alerts — items to reorder today</div>
+            <div class="alert-row"><span class="alert-row__name">Chippy BBQ</span><span class="stock-badge">3 left</span></div>
+            <div class="alert-row"><span class="alert-row__name">Mega Sardines in Tomato</span><span class="stock-badge">4 left</span></div>
+            <div class="alert-row"><span class="alert-row__name">Coca-Cola 1.5L</span><span class="stock-badge">2 left</span></div>
+            <div class="alert-row"><span class="alert-row__name">Royal Orange 1.5L</span><span class="stock-badge">3 left</span></div>
+            <div class="alert-row"><span class="alert-row__name">Scotch Brite Sponge</span><span class="stock-badge">4 left</span></div>
+            <div class="alert-row"><span class="alert-row__name">Eden Cheese (165g)</span><span class="stock-badge">5 left</span></div>
+          </div>
+          <button class="btn-primary" style="width:auto;align-self:flex-start;padding:12px 28px;">View Full Inventory →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

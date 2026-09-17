@@ -1,0 +1,70 @@
+# 2. Wireframes & Component Breakdown
+
+Use the section list from your [proposal](01-proposal.md).
+Sketch on paper, a whiteboard, or a free tool (Excalidraw, Figma, Google
+Drawings) - boxes and labels only, no colours or fonts yet. That is step 3.
+
+A wireframe is a rough box-and-label sketch of what is *on* a screen and *where*,
+not what it looks like. If you are picking a colour right now, you are a step
+ahead of yourself - come back to that later. The payoff for a React app is
+specific: **every box you draw is a component you will build.**
+
+---
+
+## Step A: Screen map (10 min)
+
+Before drawing screens, map how a user moves **between** them. Draw a box per
+section or route (just the name) and an arrow for every navigation, labelled with
+what the user clicks to make that jump.
+
+    [Dashboard] --"click Inventory nav"--> [Inventory Grid]
+       |                                          |
+    "click Add Item nav"               "click FAB (+)"
+       |                                          |
+       v                                          v
+    [Add Product Form] <--"click Back/Save"-------+
+
+Questions this should answer:
+
+* **What is the first screen the user lands on?** The Dashboard (Home).
+* **Is there a "home base" most others return to?** Yes, the Dashboard and Inventory Grid act as the primary hubs.
+* **Any screen with no way back?** No, the Add Product form has a "Back" button in the header, and global navigation is present.
+
+## Step B: One box-sketch per screen (20 min)
+
+For **every** screen, sketch its layout at **two widths: phone and desktop**.
+React apps reflow like any web page, so plan both now
+([Flexbox and Grid](../m3-styling/05-responsive-layout-flexbox-grid.md)).
+
+| Screen | Desktop layout | Phone layout (what stacks) | Navigates to |
+| --- | --- | --- | --- |
+| **1. Dashboard** | Top Header. Side-by-side Summary Cards. Wide Low-Stock Alert List below. | Top Header. Summary cards stack vertically. Alert list spans full width. Bottom Nav bar appears. | Inventory, Add Product |
+| **2. Inventory Grid** | Top Header. Horizontal Category pills. 4-column Product Grid. Floating Action Button (FAB) bottom right. | Top Header. Horizontally scrollable Category pills. 2-column Product Grid. Bottom Nav bar. FAB bottom right. | Add Product |
+| **3. Add Product** | Top Header (with Back Arrow). Centered narrow form card (inputs stacked vertically). Save Button. | Top Header (with Back Arrow). Full-width form (inputs stacked). Save button fixed at the bottom. | Dashboard, Inventory |
+
+## Step C: Break it into a component tree (10 min)
+
+This is the React-specific step. Take your busiest screen and draw a box around
+every **repeated or self-contained** piece. Each box is a component. Then sort
+them into [atomic-design](../react-theory/08-atomic-design.md) levels - it gives
+you both a name and a folder for each one:
+
+| Level | What it is | Your components |
+| --- | --- | --- |
+| **Atoms** | smallest pieces: Button, Input, Tag | `Button`, `Input`, `FloatingActionButton`, `StockBadge`, `CategoryPill` |
+| **Molecules** | small groups of atoms: SearchBar, Card, FormField | `ProductCard`, `AlertRow`, `SummaryCard`, `FormField` |
+| **Organisms** | whole sections: Header, DeckList, ProjectsGrid | `Header`, `BottomNav`, `ProductGrid`, `AlertList`, `ProductForm` |
+| **Page / layout** | the screen that arranges organisms | `DashboardPage`, `InventoryPage`, `AddProductPage` |
+
+Two rules to sanity-check:
+
+* **A component that repeats is a real component.** If a "card" appears five times, you build `<Card />` once and render it in a list with keys.
+* **A level uses the levels below it, never above.** An `Atom` never imports an `Organism`.
+
+## Step D: Sanity check (5 min)
+
+Walk through your **one most important user task** (for example "add a card and study it") screen by screen, following your own map and sketches.
+
+* **Did you hit a screen you forgot to sketch?** No, the core loop (View Alerts -> Check Inventory -> Update Stock/Add Item) is fully mapped.
+* **Did any navigation have nowhere to go?** No, the bottom nav and back buttons prevent dead ends.
+* **Does every piece of state from your proposal have a component that owns it?** Yes. `<App />` will own the main `items` array and `isLoading` state, passing it down to `DashboardPage` and `InventoryPage`. `ProductForm` will manage its own local `formError` state.
