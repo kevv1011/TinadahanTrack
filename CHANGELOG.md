@@ -5,6 +5,32 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 21:35] — Session 11: Custom Logo Integration
+
+**Summary:** Integrated a custom TindahanTrack logo (`logo.jpg`) into the browser favicon and the app header.
+
+### 🆕 Files Created
+
+| File | Contents |
+|------|---------|
+| `public/logo.jpg` | Custom TindahanTrack logo image (placed by user). |
+
+### ✏️ Files Modified
+
+#### `index.html`
+- Changed `<link rel="icon">` from `/favicon.svg` (Vite default) to `/logo.jpg` with `type="image/jpeg"`
+
+#### `src/components/organisms/Header.jsx`
+- Added `<img className="header__logo" src="/logo.jpg" alt="TindahanTrack logo" />` inside the `<h1>` element, before the title text
+
+#### `src/styles.css`
+- **`.header__title`** — added `display: flex` and `align-items: center` so the logo and text sit level
+- **`.header__logo`** (new) — `height: 32px`, `width: auto`, `border-radius: 6px`, `margin-right: var(--space-1)`, `flex-shrink: 0`
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-17 · 21:23] — Session 10: Desktop UI Enhancements
 
 **Summary:** Expanded the desktop CSS overrides to improve the layout, spacing, and visual polish of the app on wide screens (≥ 768px).
