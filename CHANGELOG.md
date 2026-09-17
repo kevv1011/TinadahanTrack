@@ -5,6 +5,25 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 21:23] — Session 10: Desktop UI Enhancements
+
+**Summary:** Expanded the desktop CSS overrides to improve the layout, spacing, and visual polish of the app on wide screens (≥ 768px).
+
+### ✏️ Files Modified
+
+#### `src/styles.css`
+- **Global container** — `.dashboard`, `.inventory`, `.add-product` now constrained to `max-width: 1200px` and centered; desktop bottom-padding no longer reserves space for the hidden BottomNav
+- **Header alignment** — `.header` set to `justify-content: center`, `.header__title` constrained to `1200px` so logo/nav aligns with content below
+- **Inventory toolbar** — `.inventory__toolbar` switches to `flex-direction: row` with `justify-content: space-between` so category pills and search bar sit side-by-side; `.search-bar` capped at `max-width: 500px` with `min-width: 280px`
+- **Product grid** — consolidated duplicate desktop rule; still `repeat(4, 1fr)` with wider `var(--space-2)` gap
+- **Form elevation** — `.product-form` gets a deeper triple-layer `box-shadow`, wider `max-width: 520px`, and more padding (`var(--space-4)`) for breathing room
+- **Empty states** — `.product-grid__empty` uses `font-size: var(--font-size-body)`, `min-height: 40vh`, and flexbox centering so the "No products" text fills the negative space gracefully
+- Removed a standalone duplicate `@media (min-width: 768px)` block for `.product-grid` that was superseded by the consolidated desktop overrides
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-17 · 15:20] — Session 9: Workspace Restructuring & Course Compliance
 
 **Summary:** Restructured the workspace folders for final submission layout and removed PII (the LICENSE file).

@@ -399,9 +399,7 @@ ul { list-style: none; }
   grid-column: 1 / -1;
 }
 
-@media (min-width: 768px) {
-  .product-grid { grid-template-columns: repeat(4, 1fr); gap: var(--space-2); }
-}
+
 
 .product-card {
   background: var(--color-surface);
@@ -533,12 +531,74 @@ ul { list-style: none; }
 }
 
 /* ══════════════════════════════════════════════════════════════
-   DESKTOP OVERRIDES
+   DESKTOP OVERRIDES  (≥ 768px)
    ══════════════════════════════════════════════════════════════ */
 @media (min-width: 768px) {
   :root { --space-edge: 32px; }
 
-  .dashboard, .inventory { max-width: 1100px; margin: 0 auto; width: 100%; }
+  /* ── Global container: constrain + center main content ── */
+  .dashboard,
+  .inventory,
+  .add-product {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    /* Desktop doesn't need bottom-nav padding */
+    padding-bottom: var(--space-edge);
+  }
+
+  /* Header inner alignment — stretch background, constrain content */
+  .header {
+    justify-content: center;
+  }
+  .header__title {
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  /* ── Inventory toolbar: pills + search side-by-side ── */
+  .inventory__toolbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: var(--space-edge);
+  }
+
+  .search-bar {
+    max-width: 500px;
+    flex-shrink: 0;
+    min-width: 280px;
+  }
+
+  /* ── Product grid: wider gap on desktop ── */
+  .product-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2);
+  }
+
+  /* ── Form elevation: deeper shadow on desktop ── */
+  .product-form {
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.08),
+      0 8px 32px rgba(0, 0, 0, 0.10),
+      0 16px 48px rgba(0, 0, 0, 0.06);
+    max-width: 520px;
+    padding: var(--space-4);
+  }
+
+  /* ── Empty states: centered + larger on desktop ── */
+  .product-grid__empty {
+    font-size: var(--font-size-body);
+    color: var(--color-text-muted);
+    padding: calc(var(--space-4) * 3) 0;
+    min-height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════
