@@ -1,8 +1,8 @@
 # Final Project
 
 ## My project repository
-Public repository: (Link to be added by user)
-Live app (if deployed): (Pending)
+Public repository: [https://github.com/kevv1011/TinadahanTrack](https://github.com/kevv1011/TinadahanTrack)
+Live app (if deployed): [https://kevv1011.github.io/TinadahanTrack/](https://kevv1011.github.io/TinadahanTrack/)
 
 ## What it is
 TindahanTrack is a mobile-first inventory dashboard built with React, Node/Express, and PostgreSQL, designed to help neighborhood sari-sari stores track stock levels and automate reorder alerts.

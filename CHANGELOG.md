@@ -5,6 +5,20 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 22:13] — Session 15: Workspace README Deployment Links
+
+**Summary:** Updated the workspace `project/README.md` with the live GitHub Pages URL and the public repository link to ensure correct final grading submission.
+
+### ✏️ Files Modified
+
+#### `project/README.md`
+- Replaced the `(Pending)` status with the live GitHub Pages deployment URL for the app: `https://kevv1011.github.io/TinadahanTrack/`
+- Added the public GitHub repository link for the codebase: `https://github.com/kevv1011/TinadahanTrack`
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-17 · 22:02] — Session 14: README Branding & Features Update
 
 **Summary:** Updated the root `README.md` to reflect the new frontend branding and to explicitly document the fully interactive offline Demo Mode functionality.
