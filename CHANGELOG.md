@@ -5,6 +5,20 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 22:18] — Session 16: GitHub Actions Deployment Workflow
+
+**Summary:** Created the missing GitHub Actions workflow file required to automatically build and deploy the Vite React app to GitHub Pages, fixing the 404 error.
+
+### 🆕 Files Created
+
+| File | Contents |
+|------|---------|
+| `.github/workflows/deploy.yml` | Standard GitHub Actions workflow for Vite. Checks out the code, installs dependencies, builds with the correct `--base` path derived from the repository name, and deploys the `dist` folder to GitHub Pages. |
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-17 · 22:13] — Session 15: Workspace README Deployment Links
 
 **Summary:** Updated the workspace `project/README.md` with the live GitHub Pages URL and the public repository link to ensure correct final grading submission.
