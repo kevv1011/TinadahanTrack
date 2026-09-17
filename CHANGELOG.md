@@ -5,6 +5,20 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 15:06] — Session 8: MIT License & Final Git Push
+
+**Summary:** Added a standard MIT License to the repository and pushed all Week 1 files to GitHub.
+
+### 🆕 Files Created
+
+| File | Contents |
+|------|---------|
+| `LICENSE` | Standard MIT License text, copyright 2026 Justine Kevin M. Reyes. |
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-17 · 14:54] — Session 7: README + Environment Setup
 
 **Summary:** Replaced the Vite boilerplate `README.md` with a complete, grading-ready project README, and created `.env.example` to document the two build-time environment variables.
