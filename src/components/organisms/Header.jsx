@@ -16,7 +16,7 @@ export default function Header({ title = 'TindahanTrack', showBackButton = false
         </button>
       )}
       <h1 className="header__title">
-        <img className="header__logo" src={`${import.meta.env.BASE_URL}logo.jpg`} alt="TindahanTrack logo" />
+        <img className="header__logo" src={`${import.meta.env.BASE_URL}logo.png`} alt="TindahanTrack logo" />
         {title}
       </h1>
 

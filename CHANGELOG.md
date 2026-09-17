@@ -5,6 +5,32 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 22:34] — Session 19: Transparent Logo Background
+
+**Summary:** Removed the white background from the TindahanTrack logo by converting it to a transparent PNG, and updated all references across the app.
+
+### 🆕 Files Created
+
+| File | Contents |
+|------|---------|
+| `public/logo.png` | The updated logo with a transparent background. |
+
+### ✏️ Files Modified
+
+#### `index.html`
+- Updated the favicon `<link>` tag to point to `/logo.png` with `type="image/png"`.
+
+#### `src/components/organisms/Header.jsx`
+- Updated the header logo image `src` to point to `logo.png`.
+
+#### `README.md`
+- Updated the root project logo image `src` to point to `logo.png`.
+
+### ❌ Files Deleted / Moved
+- `public/logo.jpg` (deleted)
+
+---
+
 ## [2026-09-17 · 22:27] — Session 18: Logo Image Base Path Fix
 
 **Summary:** Fixed a broken image link for the logo when deployed to GitHub Pages, which was causing the `alt` text ("TindahanTrack logo") to appear next to the header title.

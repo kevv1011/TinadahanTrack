@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/logo.jpg" alt="TindahanTrack Logo" width="120" style="border-radius: 20px;" />
+  <img src="public/logo.png" alt="TindahanTrack Logo" width="120" style="border-radius: 20px;" />
   <br/>
   <h1>TindahanTrack</h1>
 </div>
