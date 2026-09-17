@@ -15,7 +15,10 @@ export default function Header({ title = 'TindahanTrack', showBackButton = false
           ←
         </button>
       )}
-      <h1 className="header__title">{title}</h1>
+      <h1 className="header__title">
+        <img className="header__logo" src="/logo.jpg" alt="TindahanTrack logo" />
+        {title}
+      </h1>
 
       {/* Desktop-only nav — hidden on mobile via CSS */}
       <nav className="header__nav" aria-label="Main navigation">

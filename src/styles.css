@@ -137,6 +137,18 @@ ul { list-style: none; }
   font-weight: var(--font-weight-bold);
   letter-spacing: -0.02em;
   flex: 1;
+  /* Flex so logo + text sit level */
+  display: flex;
+  align-items: center;
+}
+
+.header__logo {
+  height: 32px;
+  width: auto;
+  border-radius: 6px;
+  margin-right: var(--space-1);
+  /* Prevent the image from stretching */
+  flex-shrink: 0;
 }
 
 /* Desktop nav — hidden on mobile, shown on desktop */
