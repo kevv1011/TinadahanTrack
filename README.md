@@ -1,4 +1,8 @@
-# TindahanTrack
+<div align="center">
+  <img src="public/logo.jpg" alt="TindahanTrack Logo" width="120" style="border-radius: 20px;" />
+  <br/>
+  <h1>TindahanTrack</h1>
+</div>
 
 A mobile-first inventory dashboard that helps a neighborhood sari-sari store owner track retail prices, update stock levels, and automatically generate a reorder list when items fall below a minimum threshold.
 
@@ -17,6 +21,7 @@ A mobile-first inventory dashboard that helps a neighborhood sari-sari store own
 - **Browse the full inventory** in a filterable, searchable grid organized by category
 - **Update stock counts** with one-tap `−` / `+` buttons directly on each product card
 - **Add new products** through a validated form with a category dropdown and a success toast notification
+- **Experience fully interactive offline "Demo Mode"** — all data interactions persist across reloads using the browser's `localStorage` until the backend is integrated
 - **Edit or delete** existing products (placeholder — will connect to backend API in Week 2)
 
 ---

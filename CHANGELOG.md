@@ -5,6 +5,20 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 22:02] — Session 14: README Branding & Features Update
+
+**Summary:** Updated the root `README.md` to reflect the new frontend branding and to explicitly document the fully interactive offline Demo Mode functionality.
+
+### ✏️ Files Modified
+
+#### `README.md`
+- Replaced the standard markdown `# TindahanTrack` heading with a centered HTML `<div>` displaying the custom `public/logo.jpg` with rounded corners.
+- Updated the "What it does" section to detail the offline Demo Mode, noting that all data interactions persist across reloads using `localStorage`.
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-17 · 21:56] — Session 13: Demo Mode & LocalStorage Persistence
 
 **Summary:** Implemented "Demo Mode" functionality allowing the app to run fully in the browser using `localStorage` for persistence without a backend API, critical for Week 1 deployment requirements.
