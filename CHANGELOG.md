@@ -5,6 +5,19 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 22:23] — Session 17: React Router Base Path Fix
+
+**Summary:** Fixed a "white screen" bug on GitHub Pages caused by React Router failing to match routes when served from a subdirectory.
+
+### ✏️ Files Modified
+
+#### `src/App.jsx`
+- Updated `<BrowserRouter>` to include `basename={import.meta.env.BASE_URL}` so that the router dynamically respects the `--base` path passed by Vite during the GitHub Actions build.
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-17 · 22:18] — Session 16: GitHub Actions Deployment Workflow
 
 **Summary:** Created the missing GitHub Actions workflow file required to automatically build and deploy the Vite React app to GitHub Pages, fixing the 404 error.

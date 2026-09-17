@@ -95,7 +95,7 @@ export default function App() {
   };
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/"          element={<DashboardPage  items={items} isLoading={isLoading} />} />
         <Route path="/inventory" element={<InventoryPage  items={items} isLoading={isLoading} onUpdateStock={handleUpdateStock} />} />
