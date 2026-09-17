@@ -5,6 +5,28 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 21:56] — Session 13: Demo Mode & LocalStorage Persistence
+
+**Summary:** Implemented "Demo Mode" functionality allowing the app to run fully in the browser using `localStorage` for persistence without a backend API, critical for Week 1 deployment requirements.
+
+### 🆕 Files Created
+
+| File | Contents |
+|------|---------|
+| `src/data/seed.js` | Extracted the 20 default products from `schema.sql` to serve as fallback data in demo mode. |
+| `.env` | Created the active environment file setting `VITE_USE_MOCK_API=true` and default API base URL. |
+
+### ✏️ Files Modified
+
+#### `src/App.jsx`
+- Added `loadFromStorage` and `saveToStorage` utility functions for reading/writing to `localStorage` under the `tindahan_items` key.
+- Updated initialization logic inside `useEffect`: Checks if `VITE_USE_MOCK_API` is active. If true, loads from `localStorage`, falling back to `seedItems` if empty. If false, fetches from Express API.
+- Updated `handleUpdateStock` and `handleAddItem` to persist updated state directly into `localStorage` when running in demo mode, whilst leaving the structure for real API calls intact.
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-17 · 21:44] — Session 12: Skeleton Loaders, Counter Animations & Button Micro-Interactions
 
 **Summary:** Added three frontend-only UI polishes: shimmer skeleton cards during loading, a count-up animation on dashboard stats, and tactile `:active` press feedback on all buttons.
