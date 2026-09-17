@@ -5,6 +5,19 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-17 · 22:27] — Session 18: Logo Image Base Path Fix
+
+**Summary:** Fixed a broken image link for the logo when deployed to GitHub Pages, which was causing the `alt` text ("TindahanTrack logo") to appear next to the header title.
+
+### ✏️ Files Modified
+
+#### `src/components/organisms/Header.jsx`
+- Updated the logo `<img src>` from the absolute `"/logo.jpg"` to dynamically use `` `${import.meta.env.BASE_URL}logo.jpg` ``. This ensures Vite correctly resolves the image path when the app is served from a subdirectory repository.
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-17 · 22:23] — Session 17: React Router Base Path Fix
 
 **Summary:** Fixed a "white screen" bug on GitHub Pages caused by React Router failing to match routes when served from a subdirectory.
