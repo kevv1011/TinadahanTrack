@@ -5,6 +5,32 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-18 · 19:42] — Session 21: Express Backend Scaffold & Neon DB Initialization
+
+**Summary:** Created the full Express backend server from scratch, connected it to a Neon PostgreSQL cloud database, and successfully seeded all 20 products.
+
+### 🆕 Files Created
+
+| File | Contents |
+|------|---------|
+| `server/app.js` | Full Express API with `GET /api/items`, `POST /api/items`, `PATCH /api/items/:id/stock`, `DELETE /api/items/:id`, and `GET /healthz`. |
+| `server/package.json` | Server dependencies: `express`, `cors`, `pg`, `dotenv`. Includes `db:reset` script. |
+| `server/schema.sql` | `DROP/CREATE TABLE items` + 20 `INSERT` seed rows matching `src/data/seed.js`. |
+| `server/scripts/db-reset.js` | Node.js script to execute `schema.sql` against the Neon DB with pass/fail output. |
+| `server/.env` | Neon credentials (git-ignored — never committed). |
+| `server/.gitignore` | Blocks `.env` and `node_modules` in the server directory. |
+
+### ✏️ Files Modified
+
+#### `.gitignore` (root)
+- Added `.env`, `.env.*`, `!.env.example` to prevent credentials from ever being committed.
+
+### ✅ Validation
+- `npm install` completed: 85 packages, 0 vulnerabilities.
+- `npm run db:reset` output: `✅ db:reset complete — 20 rows in items table.`
+
+---
+
 ## [2026-09-18 · 15:13] — Session 20: Finals Submission Documentation Update
 
 **Summary:** Updated the Week 1 finals submission documents to ensure they accurately reflect all the recent accomplishments, including the Demo Mode implementation, GitHub Pages deployment, and UI polishes.
