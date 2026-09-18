@@ -5,6 +5,24 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-18 · 19:55] — Session 22: Frontend–Backend API Integration
+
+**Summary:** Completed the live API wiring in `App.jsx`, replacing all TODO stubs with real `fetch()` calls to the Express backend. The app now reads and writes directly to the Neon PostgreSQL database when running locally.
+
+### ✏️ Files Modified
+
+#### `src/App.jsx`
+- **GET `/api/items`** — Added HTTP status check and named error logging.
+- **PATCH `/api/items/:id/stock`** — Implemented optimistic UI update (immediate) + best-effort server sync that reconciles the DB's authoritative value on success.
+- **POST `/api/items`** — Now awaits the server response and uses the real DB-generated `id` for the new item, rather than a placeholder `Date.now()` id.
+
+#### `.env` (local only — git-ignored)
+- Changed `VITE_USE_MOCK_API=true` → `VITE_USE_MOCK_API=false` to activate live mode for local development.
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-18 · 19:42] — Session 21: Express Backend Scaffold & Neon DB Initialization
 
 **Summary:** Created the full Express backend server from scratch, connected it to a Neon PostgreSQL cloud database, and successfully seeded all 20 products.

@@ -49,9 +49,15 @@ export default function App() {
     } else {
       // Live Mode: fetch from Express API
       fetch(`${API_BASE}/api/items`)
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
         .then(data => { setItems(data); setIsLoading(false); })
-        .catch(() => setIsLoading(false));
+        .catch(err => {
+          console.error('Failed to load items from API:', err.message);
+          setIsLoading(false);
+        });
     }
   }, []);
 
@@ -68,7 +74,21 @@ export default function App() {
     });
 
     if (!IS_DEMO) {
-      // TODO: PATCH ${API_BASE}/api/items/${id}/stock { delta }
+      // Best-effort server sync — UI already updated optimistically above
+      fetch(`${API_BASE}/api/items/${id}/stock`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ delta }),
+      })
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then(updated => {
+          // Reconcile UI with authoritative DB value
+          setItems(prev => prev.map(item => item.id === id ? updated : item));
+        })
+        .catch(err => console.error('Stock sync failed:', err.message));
     }
   };
 
@@ -88,9 +108,24 @@ export default function App() {
         return updated;
       });
     } else {
-      // TODO: POST ${API_BASE}/api/items — replace placeholder id with server-returned id
-      const newItem = { ...fields, id: Date.now() };
-      setItems(prev => [...prev, newItem]);
+      // Live Mode: POST to API and use the DB-generated id
+      try {
+        const res = await fetch(`${API_BASE}/api/items`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...fields,
+            price: Number(fields.price),
+            current_stock: Number(fields.current_stock),
+            min_threshold: Number(fields.min_threshold),
+          }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const newItem = await res.json();
+        setItems(prev => [...prev, newItem]);
+      } catch (err) {
+        console.error('Failed to add item:', err.message);
+      }
     }
   };
 
