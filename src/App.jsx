@@ -33,6 +33,20 @@ function saveToStorage(items) {
 export default function App() {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // ── Theme State ───────────────────────────────────────────────
+  const [theme, setTheme] = useState(() => {
+    return window.localStorage.getItem('tindahan_theme') || 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    window.localStorage.setItem('tindahan_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
 
   // ── Initial load ──────────────────────────────────────────────
   useEffect(() => {
@@ -175,9 +189,9 @@ export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
-        <Route path="/"          element={<DashboardPage  items={items} isLoading={isLoading} />} />
-        <Route path="/inventory" element={<InventoryPage  items={items} isLoading={isLoading} onUpdateStock={handleUpdateStock} onEditItem={handleEditItem} onDeleteItem={handleDeleteItem} />} />
-        <Route path="/add-item"  element={<AddProductPage onAddItem={handleAddItem} />} />
+        <Route path="/"          element={<DashboardPage  items={items} isLoading={isLoading} theme={theme} toggleTheme={toggleTheme} />} />
+        <Route path="/inventory" element={<InventoryPage  items={items} isLoading={isLoading} onUpdateStock={handleUpdateStock} onEditItem={handleEditItem} onDeleteItem={handleDeleteItem} theme={theme} toggleTheme={toggleTheme} />} />
+        <Route path="/add-item"  element={<AddProductPage onAddItem={handleAddItem} theme={theme} toggleTheme={toggleTheme} />} />
       </Routes>
     </BrowserRouter>
   );

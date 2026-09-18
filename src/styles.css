@@ -10,19 +10,36 @@
    DESIGN TOKENS
    ══════════════════════════════════════════════════════════════ */
 :root {
-  /* Colour tokens */
+  /* Light Mode (Default) Colour tokens */
   --color-primary:       #A81F78;
   --color-primary-dark:  #8a1862;
   --color-accent:        #EF4444;
-  --color-accent-bg:     rgba(239, 68, 68, 0.15); /* Adjusted for dark mode */
-  --color-success:       #10B981; /* Brighter green for dark mode */
-  --color-success-bg:    rgba(16, 185, 129, 0.15); /* Adjusted for dark mode */
+  --color-accent-bg:     #FEE2E2;
+  --color-success:       #059669;
+  --color-success-bg:    #D1FAE5;
+  --color-bg:            #F3F4F6;
+  --color-surface:       #FFFFFF;
+  --color-text:          #1F2937;
+  --color-text-muted:    #6B7280;
+  --color-border:        #E5E7EB;
+}
+
+[data-theme="dark"] {
+  /* Dark Mode Colour tokens */
+  --color-primary:       #A81F78;
+  --color-primary-dark:  #8a1862;
+  --color-accent:        #EF4444;
+  --color-accent-bg:     rgba(239, 68, 68, 0.15);
+  --color-success:       #10B981;
+  --color-success-bg:    rgba(16, 185, 129, 0.15);
   --color-bg:            #121212;
   --color-surface:       #1E1E1E;
   --color-text:          #EAEAEA;
-  --color-text-muted:    #A0A0A0; /* Lighter muted text */
+  --color-text-muted:    #A0A0A0;
   --color-border:        #333333;
+}
 
+:root {
   /* Type scale */
   --font-family-base:    'Inter', system-ui, -apple-system, sans-serif;
   --font-size-heading:   1.5rem;

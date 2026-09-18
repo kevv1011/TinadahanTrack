@@ -7,7 +7,7 @@ import Toast from '../components/atoms/Toast';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function AddProductPage({ onAddItem }) {
+export default function AddProductPage({ onAddItem, theme, toggleTheme }) {
   const [formError, setFormError]   = useState('');
   const [showToast, setShowToast]   = useState(false);
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export default function AddProductPage({ onAddItem }) {
 
   return (
     <div className="page">
-      <Header title="Add New Product" showBackButton />
+      <Header title="Add New Item" showBackButton theme={theme} toggleTheme={toggleTheme} />
       <main className="add-product" aria-label="Add product form">
         <ProductForm onSubmit={handleSubmit} formError={formError} />
       </main>

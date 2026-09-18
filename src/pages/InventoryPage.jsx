@@ -9,7 +9,7 @@ import SkeletonCard from '../components/atoms/SkeletonCard';
 import { useState } from 'react';
 import { Search, X } from 'lucide-react';
 
-export default function InventoryPage({ items = [], isLoading, onUpdateStock, onEditItem, onDeleteItem }) {
+export default function InventoryPage({ items = [], isLoading, onUpdateStock, onEditItem, onDeleteItem, theme, toggleTheme }) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -23,7 +23,7 @@ export default function InventoryPage({ items = [], isLoading, onUpdateStock, on
 
   return (
     <div className="page">
-      <Header />
+      <Header theme={theme} toggleTheme={toggleTheme} />
       <main className="inventory" aria-label="Inventory">
 
         {/* ── Sticky toolbar: category pills + search ── */}

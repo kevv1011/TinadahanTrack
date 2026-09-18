@@ -3,9 +3,9 @@
 // NOTE: No burger menu — mobile routing is handled by BottomNav.
 //       Desktop nav links are shown via CSS (hidden below 768px).
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Sun, Moon } from 'lucide-react';
 
-export default function Header({ title = 'TindahanTrack', showBackButton = false }) {
+export default function Header({ title = 'TindahanTrack', showBackButton = false, theme, toggleTheme }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -27,6 +27,18 @@ export default function Header({ title = 'TindahanTrack', showBackButton = false
         <Link to="/inventory" className={pathname === '/inventory' ? 'active' : ''}>Inventory</Link>
         <Link to="/add-item"  className={pathname === '/add-item'  ? 'active' : ''}>+ Add Item</Link>
       </nav>
+
+      {/* Theme toggle */}
+      {toggleTheme && (
+        <button
+          className="header__theme-toggle"
+          onClick={toggleTheme}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', marginLeft: 'auto', display: 'flex', alignItems: 'center' }}
+        >
+          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+      )}
     </header>
   );
 }

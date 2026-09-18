@@ -6,12 +6,12 @@ import SummaryCard from '../components/molecules/SummaryCard';
 import AlertList from '../components/organisms/AlertList';
 import { Link } from 'react-router-dom';
 
-export default function DashboardPage({ items = [], isLoading }) {
+export default function DashboardPage({ items = [], isLoading, theme, toggleTheme }) {
   const lowStockItems = items.filter(i => i.current_stock <= i.min_threshold);
 
   return (
     <div className="page">
-      <Header />
+      <Header theme={theme} toggleTheme={toggleTheme} />
       <main className="dashboard" aria-label="Dashboard">
         {isLoading ? (
           <p className="loading">Loading...</p>
