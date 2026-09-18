@@ -5,6 +5,23 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-18 · 15:13] — Session 20: Finals Submission Documentation Update
+
+**Summary:** Updated the Week 1 finals submission documents to ensure they accurately reflect all the recent accomplishments, including the Demo Mode implementation, GitHub Pages deployment, and UI polishes.
+
+### ✏️ Files Modified
+
+#### `project/REPORT.md`
+- Added the persistent Demo Mode, GitHub Pages automated deployment, and final UI polishes to the "What changed this week" section.
+- Added the React Router blank screen issue to the "What broke" section.
+
+#### `journal/week-1.md`
+- Updated the "What I did", "What blocked me", and "What I learned" sections to include reflections on deploying the app to GitHub Pages and implementing the `localStorage` fallback.
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-17 · 22:34] — Session 19: Transparent Logo Background
 
 **Summary:** Removed the white background from the TindahanTrack logo by converting it to a transparent PNG, and updated all references across the app.
