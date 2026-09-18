@@ -3,6 +3,7 @@
 // NOTE: No burger menu — mobile routing is handled by BottomNav.
 //       Desktop nav links are shown via CSS (hidden below 768px).
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 export default function Header({ title = 'TindahanTrack', showBackButton = false }) {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ export default function Header({ title = 'TindahanTrack', showBackButton = false
     <header className="header">
       {showBackButton && (
         <button className="header__back" onClick={() => navigate(-1)} aria-label="Go back">
-          ←
+          <ArrowLeft size={20} />
         </button>
       )}
       <h1 className="header__title">

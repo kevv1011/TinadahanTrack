@@ -7,6 +7,7 @@ import ProductGrid from '../components/organisms/ProductGrid';
 import CategoryPill from '../components/atoms/CategoryPill';
 import SkeletonCard from '../components/atoms/SkeletonCard';
 import { useState } from 'react';
+import { Search, X } from 'lucide-react';
 
 export default function InventoryPage({ items = [], isLoading, onUpdateStock, onEditItem, onDeleteItem }) {
   const [activeCategory, setActiveCategory] = useState('All');
@@ -39,7 +40,7 @@ export default function InventoryPage({ items = [], isLoading, onUpdateStock, on
           </div>
 
           <div className="search-bar">
-            <span className="search-bar__icon" aria-hidden="true">🔍</span>
+            <span className="search-bar__icon" aria-hidden="true"><Search size={16} /></span>
             <input
               id="inventory-search"
               className="search-bar__input"
@@ -55,7 +56,7 @@ export default function InventoryPage({ items = [], isLoading, onUpdateStock, on
                 onClick={() => setSearchQuery('')}
                 aria-label="Clear search"
               >
-                ×
+                <X size={16} />
               </button>
             )}
           </div>

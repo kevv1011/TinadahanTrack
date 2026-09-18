@@ -2,11 +2,12 @@
 // Uses useLocation to automatically highlight the active route —
 // no activeTab prop needed from the parent.
 import { Link, useLocation } from 'react-router-dom';
+import { LayoutDashboard, Package, PlusSquare } from 'lucide-react';
 
 const TABS = [
-  { path: '/',          label: 'Home',      icon: '🏠' },
-  { path: '/inventory', label: 'Inventory', icon: '📦' },
-  { path: '/add-item',  label: 'Add',       icon: '➕' },
+  { path: '/',          label: 'Home',      icon: <LayoutDashboard size={20} /> },
+  { path: '/inventory', label: 'Inventory', icon: <Package size={20} /> },
+  { path: '/add-item',  label: 'Add',       icon: <PlusSquare size={20} /> },
 ];
 
 export default function BottomNav() {

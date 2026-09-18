@@ -2,6 +2,7 @@
 // Props: product ({ id, name, category, price, current_stock, min_threshold, image_url }),
 //        onUpdateStock (fn(id, delta)), onEditItem (fn(id, fields)), onDeleteItem (fn(id))
 import { useState } from 'react';
+import { Edit2, Trash2 } from 'lucide-react';
 import StockBadge from '../atoms/StockBadge';
 import Button from '../atoms/Button';
 import EditModal from './EditModal';
@@ -42,7 +43,7 @@ export default function ProductCard({ product, onUpdateStock, onEditItem, onDele
               aria-label={`Edit ${name}`}
               title="Edit product"
             >
-              ✏️
+              <Edit2 size={16} />
             </button>
             <button
               className="product-card__action-btn product-card__action-btn--delete"
@@ -50,19 +51,30 @@ export default function ProductCard({ product, onUpdateStock, onEditItem, onDele
               aria-label={`Delete ${name}`}
               title="Delete product"
             >
-              🗑️
+              <Trash2 size={16} />
             </button>
           </div>
         </div>
 
         <h3 className="product-card__name">{name}</h3>
-        <p className="product-card__price">₱{Number(price).toFixed(2)}</p>
+        <p className="product-card__price mono-num">₱{Number(price).toFixed(2)}</p>
         <StockBadge count={current_stock} threshold={min_threshold} />
 
         {/* ── Stock [−] [+] controls ── */}
         <div className="product-card__controls">
           <Button variant="secondary" onClick={() => onUpdateStock(id, -1)}>−</Button>
           <Button variant="secondary" onClick={() => onUpdateStock(id, +1)}>+</Button>
+        </div>
+
+        {/* ── Stock Progress Bar ── */}
+        <div className="stock-progress-bar-container">
+          <div
+            className="stock-progress-bar"
+            style={{
+              width: `${Math.min((current_stock / 100) * 100, 100)}%`,
+              backgroundColor: current_stock <= min_threshold ? 'var(--color-accent)' : 'var(--color-success)',
+            }}
+          />
         </div>
       </article>
 

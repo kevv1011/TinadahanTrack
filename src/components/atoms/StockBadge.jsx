@@ -4,7 +4,7 @@
 export default function StockBadge({ count, threshold }) {
   const isLow = count <= threshold;
   return (
-    <span className={`stock-badge${isLow ? ' stock-badge--low' : ''}`}>
+    <span className={`stock-badge mono-num${isLow ? ' stock-badge--low' : ''}`}>
       {count} left
     </span>
   );
