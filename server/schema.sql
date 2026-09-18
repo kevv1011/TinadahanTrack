@@ -10,6 +10,7 @@ CREATE TABLE items (
   price          NUMERIC(10, 2) NOT NULL DEFAULT 0,
   current_stock  INTEGER        NOT NULL DEFAULT 0,
   min_threshold  INTEGER        NOT NULL DEFAULT 5,
+  image_url      TEXT,
   created_at     TIMESTAMPTZ    NOT NULL DEFAULT NOW()
 );
 

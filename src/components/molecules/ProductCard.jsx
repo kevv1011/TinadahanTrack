@@ -1,5 +1,5 @@
 // Molecule — inventory card for one product
-// Props: product ({ id, name, category, price, current_stock, min_threshold }),
+// Props: product ({ id, name, category, price, current_stock, min_threshold, image_url }),
 //        onUpdateStock (fn(id, delta)), onEditItem (fn(id, fields)), onDeleteItem (fn(id))
 import { useState } from 'react';
 import StockBadge from '../atoms/StockBadge';
@@ -7,7 +7,7 @@ import Button from '../atoms/Button';
 import EditModal from './EditModal';
 
 export default function ProductCard({ product, onUpdateStock, onEditItem, onDeleteItem }) {
-  const { id, name, category, price, current_stock, min_threshold } = product;
+  const { id, name, category, price, current_stock, min_threshold, image_url } = product;
   const [showEdit, setShowEdit] = useState(false);
 
   const handleSave = async (fields) => {
@@ -24,6 +24,14 @@ export default function ProductCard({ product, onUpdateStock, onEditItem, onDele
   return (
     <>
       <article className="product-card">
+        {/* ── Product image ── */}
+        <div className="product-card__image">
+          {image_url
+            ? <img src={image_url} alt={name} className="product-card__img" />
+            : <div className="product-card__img-placeholder" aria-hidden="true">📦</div>
+          }
+        </div>
+
         {/* ── Top row: category label + action icons ── */}
         <div className="product-card__header">
           <p className="product-card__category">{category}</p>

@@ -1,6 +1,7 @@
 // Molecule — modal overlay for editing a product's details
 // Props: product (object), onSave (fn(updatedFields)), onClose (fn)
 import { useState } from 'react';
+import ImageUploader from '../atoms/ImageUploader';
 
 export default function EditModal({ product, onSave, onClose }) {
   const [form, setForm] = useState({
@@ -9,6 +10,7 @@ export default function EditModal({ product, onSave, onClose }) {
     price:         product.price,
     current_stock: product.current_stock,
     min_threshold: product.min_threshold,
+    image_url:     product.image_url || null,
   });
   const [saving, setSaving] = useState(false);
 
@@ -36,6 +38,12 @@ export default function EditModal({ product, onSave, onClose }) {
         </div>
 
         <form className="modal__form" onSubmit={handleSubmit}>
+          {/* Image uploader */}
+          <ImageUploader
+            imageUrl={form.image_url}
+            onUpload={(url) => setForm(prev => ({ ...prev, image_url: url }))}
+          />
+
           <label className="form-label" htmlFor="edit-name">Product Name</label>
           <input
             id="edit-name"
