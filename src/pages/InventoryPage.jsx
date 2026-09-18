@@ -8,7 +8,7 @@ import CategoryPill from '../components/atoms/CategoryPill';
 import SkeletonCard from '../components/atoms/SkeletonCard';
 import { useState } from 'react';
 
-export default function InventoryPage({ items = [], isLoading, onUpdateStock }) {
+export default function InventoryPage({ items = [], isLoading, onUpdateStock, onEditItem, onDeleteItem }) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -77,7 +77,7 @@ export default function InventoryPage({ items = [], isLoading, onUpdateStock }) 
                   : 'No products in this category.'}
               </p>
             )}
-            <ProductGrid products={filtered} onUpdateStock={onUpdateStock} />
+            <ProductGrid products={filtered} onUpdateStock={onUpdateStock} onEditItem={onEditItem} onDeleteItem={onDeleteItem} />
           </>
         )}
       </main>

@@ -2,7 +2,7 @@
 // Props: products (array), onUpdateStock (fn)
 import ProductCard from '../molecules/ProductCard';
 
-export default function ProductGrid({ products = [], onUpdateStock }) {
+export default function ProductGrid({ products = [], onUpdateStock, onEditItem, onDeleteItem }) {
   if (products.length === 0) {
     return <p className="product-grid__empty">No products found.</p>;
   }
@@ -13,6 +13,8 @@ export default function ProductGrid({ products = [], onUpdateStock }) {
           key={product.id}
           product={product}
           onUpdateStock={onUpdateStock}
+          onEditItem={onEditItem}
+          onDeleteItem={onDeleteItem}
         />
       ))}
     </section>

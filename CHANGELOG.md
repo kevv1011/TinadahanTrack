@@ -5,6 +5,44 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-18 · 20:00] — Session 23: Real Edit & Delete Functionality
+
+**Summary:** Replaced the placeholder `alert()` stubs with fully wired edit/delete features. Clicking ✏️ now opens an animated modal form; 🗑️ prompts a confirm dialog and removes the item from the DB.
+
+### 🆕 Files Created
+
+| File | Contents |
+|------|---------|
+| `src/components/molecules/EditModal.jsx` | Animated overlay modal with a form for all product fields (name, category, price, stock, threshold). Shows "Saving…" state while the API call is in flight. |
+
+### ✏️ Files Modified
+
+#### `server/app.js`
+- Added `PUT /api/items/:id` route that updates all fields of an existing product.
+
+#### `src/App.jsx`
+- Added `handleEditItem(id, fields)` — calls `PUT /api/items/:id` in live mode; updates `localStorage` in demo mode.
+- Added `handleDeleteItem(id)` — calls `DELETE /api/items/:id` in live mode; filters from state+storage in demo mode.
+- Threaded both handlers as props to `InventoryPage`.
+
+#### `src/pages/InventoryPage.jsx`
+- Accepts and forwards `onEditItem` and `onDeleteItem` to `ProductGrid`.
+
+#### `src/components/organisms/ProductGrid.jsx`
+- Accepts and forwards `onEditItem` and `onDeleteItem` to each `ProductCard`.
+
+#### `src/components/molecules/ProductCard.jsx`
+- ✏️ button now opens `<EditModal>` instead of `alert()`.
+- 🗑️ button calls `onDeleteItem` after a `confirm()` dialog instead of double-`alert()`.
+
+#### `src/styles.css`
+- Added `.modal-overlay`, `.modal`, `.modal__header/title/close/form/row/footer` styles.
+- Added `@keyframes fadeIn` and `@keyframes slideUp` entrance animations.
+
+### ❌ Nothing Deleted / Moved
+
+---
+
 ## [2026-09-18 · 19:55] — Session 22: Frontend–Backend API Integration
 
 **Summary:** Completed the live API wiring in `App.jsx`, replacing all TODO stubs with real `fetch()` calls to the Express backend. The app now reads and writes directly to the Neon PostgreSQL database when running locally.

@@ -49,6 +49,27 @@ app.post('/api/items', async (req, res) => {
   }
 });
 
+// ── PUT /api/items/:id ────────────────────────────────────────────
+app.put('/api/items/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, category, price, current_stock, min_threshold } = req.body;
+  if (!name || !category) return res.status(400).json({ error: 'name and category are required' });
+  try {
+    const { rows } = await pool.query(
+      `UPDATE items
+          SET name = $1, category = $2, price = $3,
+              current_stock = $4, min_threshold = $5
+        WHERE id = $6
+        RETURNING *;`,
+      [name, category, price ?? 0, current_stock ?? 0, min_threshold ?? 5, id]
+    );
+    if (!rows.length) return res.status(404).json({ error: 'Item not found' });
+    res.json(rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ── PATCH /api/items/:id/stock ────────────────────────────────────
 app.patch('/api/items/:id/stock', async (req, res) => {
   const { id } = req.params;

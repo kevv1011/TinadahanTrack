@@ -129,11 +129,54 @@ export default function App() {
     }
   };
 
+  // ── Edit existing product ─────────────────────────────────────
+  const handleEditItem = async (id, fields) => {
+    if (IS_DEMO) {
+      setItems(prev => {
+        const updated = prev.map(item => item.id === id ? { ...item, ...fields } : item);
+        saveToStorage(updated);
+        return updated;
+      });
+    } else {
+      try {
+        const res = await fetch(`${API_BASE}/api/items/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(fields),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const updated = await res.json();
+        setItems(prev => prev.map(item => item.id === id ? updated : item));
+      } catch (err) {
+        console.error('Failed to edit item:', err.message);
+      }
+    }
+  };
+
+  // ── Delete product ────────────────────────────────────────────
+  const handleDeleteItem = async (id) => {
+    if (IS_DEMO) {
+      setItems(prev => {
+        const updated = prev.filter(item => item.id !== id);
+        saveToStorage(updated);
+        return updated;
+      });
+    } else {
+      try {
+        const res = await fetch(`${API_BASE}/api/items/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setItems(prev => prev.filter(item => item.id !== id));
+      } catch (err) {
+        console.error('Failed to delete item:', err.message);
+      }
+    }
+  };
+
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/"          element={<DashboardPage  items={items} isLoading={isLoading} />} />
-        <Route path="/inventory" element={<InventoryPage  items={items} isLoading={isLoading} onUpdateStock={handleUpdateStock} />} />
+        <Route path="/inventory" element={<InventoryPage  items={items} isLoading={isLoading} onUpdateStock={handleUpdateStock} onEditItem={handleEditItem} onDeleteItem={handleDeleteItem} />} />
         <Route path="/add-item"  element={<AddProductPage onAddItem={handleAddItem} />} />
       </Routes>
     </BrowserRouter>
