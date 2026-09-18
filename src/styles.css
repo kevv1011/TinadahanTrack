@@ -440,6 +440,8 @@ ul { list-style: none; }
   display: flex;
   flex-direction: column;
   gap: 5px;
+  position: relative;
+  overflow: hidden;
 }
 
 .product-card__category {
