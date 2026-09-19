@@ -5,6 +5,69 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-19 · 23:10] — Session 25: Inventory Analytics, Quick Cart & Recent Transactions
+
+**Summary:** Implemented Week 3 features transforming the app into a POS-style system. Added Dashboard Analytics (Total Value & Recharts Donut), a Quick Cart sidebar for batch stock deductions, and a Recent Transactions feed to audit sales history.
+
+### 🆕 Files Created
+
+| File | Contents |
+|------|---------|
+| `server/migrate_transactions.js` | Database script to create the new `transactions` table. |
+| `src/components/organisms/QuickCart.jsx` | A sliding sidebar to stage items and batch-deduct stock. |
+| `src/components/organisms/RecentTransactions.jsx` | A feed component displaying the 15 most recent sales/deductions. |
+| `src/components/organisms/StatsPanel.jsx` | An analytics tile wrapping a `SummaryCard` and a `recharts` Donut chart. |
+
+### ✏️ Files Modified
+
+#### `server/schema.sql`
+- Added the `transactions` table with a foreign key to `items`.
+
+#### `server/app.js`
+- Added `GET /api/stats` endpoint with SQL aggregations.
+- Added `GET /api/transactions/recent` endpoint.
+- Updated `PATCH /api/items/batch-deduct` with a secure `BEGIN...COMMIT` block that also logs transactions.
+- Updated `PATCH /api/items/:id/stock` to log transactions for negative changes.
+
+#### `src/App.jsx`
+- Added `cart` state and `handleBatchDeduct` logic (with optimistic updates and demo mode fallback).
+- Added `transactions` state and wired up live fetching.
+
+#### `src/pages/DashboardPage.jsx`
+- Integrated `<StatsPanel>` and `<RecentTransactions>`.
+
+#### `src/pages/InventoryPage.jsx`
+- Integrated `<QuickCart>` sidebar and added a floating `ShoppingCart` FAB.
+
+#### `src/components/molecules/ProductCard.jsx`
+- Added an `onAddToCart` button next to edit/delete actions.
+
+#### `src/styles.css`
+- Added CSS classes for `.stats-panel`, `.quick-cart`, `.cart-badge`, and `.recent-transactions`.
+
+---
+
+## [2026-09-19 · 22:30] — Session 24: UI/UX Overhaul & Dark Mode
+
+**Summary:** Swapped the emoji-based icons for professional vector icons via `lucide-react`, implemented a persistent dark mode toggle, and added a visual stock progress bar to the product cards.
+
+### ✏️ Files Modified
+
+#### `src/styles.css`
+- Updated `:root` variables and added `[data-theme="dark"]` for a sleek dark mode.
+- Fixed `.product-card` layout and added `.stock-progress-bar`.
+
+#### `src/App.jsx`
+- Wired up a `theme` state backed by `localStorage` and toggled via `data-theme`.
+
+#### `src/components/organisms/Header.jsx`
+- Added a dark mode toggle button (`Sun`/`Moon` icons).
+
+#### `src/components/molecules/ProductCard.jsx`
+- Replaced ✏️/🗑️ with `lucide-react` icons and added the bottom stock progress bar.
+
+---
+
 ## [2026-09-18 · 20:00] — Session 23: Real Edit & Delete Functionality
 
 **Summary:** Replaced the placeholder `alert()` stubs with fully wired edit/delete features. Clicking ✏️ now opens an animated modal form; 🗑️ prompts a confirm dialog and removes the item from the DB.
