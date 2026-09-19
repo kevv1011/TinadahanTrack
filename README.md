@@ -6,7 +6,7 @@
 
 A mobile-first inventory dashboard that helps a neighborhood sari-sari store owner track retail prices, update stock levels, and automatically generate a reorder list when items fall below a minimum threshold.
 
-**Live site:** [https://kevv1011.github.io/TindahanTrack/](https://kevv1011.github.io/TindahanTrack/)
+**Live site:** [https://kevv1011.github.io/TinadahanTrack/](https://kevv1011.github.io/TinadahanTrack/)
 **API:** [https://your-api.onrender.com/healthz](https://your-api.onrender.com/healthz) *(not yet deployed)*
 **Demo video:** *(link — to be added before finals)*
 
