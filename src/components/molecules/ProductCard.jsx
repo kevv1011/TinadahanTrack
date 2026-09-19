@@ -2,12 +2,12 @@
 // Props: product ({ id, name, category, price, current_stock, min_threshold, image_url }),
 //        onUpdateStock (fn(id, delta)), onEditItem (fn(id, fields)), onDeleteItem (fn(id))
 import { useState } from 'react';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, ShoppingCart } from 'lucide-react';
 import StockBadge from '../atoms/StockBadge';
 import Button from '../atoms/Button';
 import EditModal from './EditModal';
 
-export default function ProductCard({ product, onUpdateStock, onEditItem, onDeleteItem }) {
+export default function ProductCard({ product, onUpdateStock, onEditItem, onDeleteItem, onAddToCart }) {
   const { id, name, category, price, current_stock, min_threshold, image_url } = product;
   const [showEdit, setShowEdit] = useState(false);
 
@@ -37,6 +37,17 @@ export default function ProductCard({ product, onUpdateStock, onEditItem, onDele
         <div className="product-card__header">
           <p className="product-card__category">{category}</p>
           <div className="product-card__actions">
+            {onAddToCart && (
+              <button
+                className="product-card__action-btn product-card__action-btn--cart"
+                onClick={() => onAddToCart(product)}
+                aria-label={`Add ${name} to Quick Cart`}
+                title="Add to Quick Cart"
+                disabled={current_stock === 0}
+              >
+                <ShoppingCart size={16} />
+              </button>
+            )}
             <button
               className="product-card__action-btn product-card__action-btn--edit"
               onClick={() => setShowEdit(true)}

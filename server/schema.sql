@@ -14,6 +14,17 @@ CREATE TABLE items (
   created_at     TIMESTAMPTZ    NOT NULL DEFAULT NOW()
 );
 
+DROP TABLE IF EXISTS transactions;
+
+CREATE TABLE transactions (
+  id          SERIAL PRIMARY KEY,
+  item_id     INTEGER REFERENCES items(id) ON DELETE CASCADE,
+  item_name   VARCHAR(120) NOT NULL,
+  qty         INTEGER NOT NULL,
+  total_price NUMERIC(10, 2) NOT NULL,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- ── Seed data ────────────────────────────────────────────────────
 INSERT INTO items (name, category, price, current_stock, min_threshold) VALUES
   ('Piattos Cheese',         'Snacks',        22.00, 18,  5),

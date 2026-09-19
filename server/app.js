@@ -57,6 +57,34 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   res.json({ url });
 });
 
+// ── GET /api/transactions/recent ─────────────────────────────────
+app.get('/api/transactions/recent', async (_req, res) => {
+  try {
+    const { rows } = await pool.query(
+      'SELECT * FROM transactions ORDER BY created_at DESC LIMIT 15;'
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── GET /api/stats ────────────────────────────────────────────────
+app.get('/api/stats', async (_req, res) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT
+        COALESCE(SUM(price * current_stock), 0)                     AS total_value,
+        COUNT(*) FILTER (WHERE current_stock > min_threshold)       AS healthy_count,
+        COUNT(*) FILTER (WHERE current_stock <= min_threshold)      AS low_stock_count
+      FROM items;
+    `);
+    res.json(rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ── GET /api/items ────────────────────────────────────────────────
 app.get('/api/items', async (_req, res) => {
   try {
@@ -104,23 +132,88 @@ app.put('/api/items/:id', async (req, res) => {
   }
 });
 
+// ── PATCH /api/items/batch-deduct ─────────────────────────────────
+app.patch('/api/items/batch-deduct', async (req, res) => {
+  const operations = req.body;
+  if (!Array.isArray(operations)) {
+    return res.status(400).json({ error: 'Body must be an array of {id, qty}' });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const updatedItems = [];
+
+    for (const { id, qty } of operations) {
+      if (typeof qty !== 'number') throw new Error(`Invalid qty for item ${id}`);
+      
+      const { rows } = await client.query(
+        `UPDATE items
+            SET current_stock = GREATEST(0, current_stock - $1)
+          WHERE id = $2
+          RETURNING *;`,
+        [qty, id]
+      );
+      
+      if (!rows.length) throw new Error(`Item ${id} not found`);
+      const item = rows[0];
+      
+      // Log transaction
+      await client.query(
+        `INSERT INTO transactions (item_id, item_name, qty, total_price)
+         VALUES ($1, $2, $3, $4);`,
+        [item.id, item.name, qty, qty * Number(item.price)]
+      );
+      
+      updatedItems.push(item);
+    }
+
+    await client.query('COMMIT');
+    res.json(updatedItems);
+  } catch (err) {
+    await client.query('ROLLBACK');
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
 // ── PATCH /api/items/:id/stock ────────────────────────────────────
 app.patch('/api/items/:id/stock', async (req, res) => {
   const { id } = req.params;
   const { delta } = req.body;
   if (typeof delta !== 'number') return res.status(400).json({ error: 'delta must be a number' });
+  
+  const client = await pool.connect();
   try {
-    const { rows } = await pool.query(
+    await client.query('BEGIN');
+    const { rows } = await client.query(
       `UPDATE items
           SET current_stock = GREATEST(0, current_stock + $1)
         WHERE id = $2
         RETURNING *;`,
       [delta, id]
     );
-    if (!rows.length) return res.status(404).json({ error: 'Item not found' });
-    res.json(rows[0]);
+    if (!rows.length) throw new Error('Item not found');
+    const item = rows[0];
+
+    // If stock was reduced, log it as a transaction
+    if (delta < 0) {
+      const qty = Math.abs(delta);
+      await client.query(
+        `INSERT INTO transactions (item_id, item_name, qty, total_price)
+         VALUES ($1, $2, $3, $4);`,
+        [item.id, item.name, qty, qty * Number(item.price)]
+      );
+    }
+    
+    await client.query('COMMIT');
+    res.json(item);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    await client.query('ROLLBACK');
+    res.status(err.message === 'Item not found' ? 404 : 500).json({ error: err.message });
+  } finally {
+    client.release();
   }
 });
 

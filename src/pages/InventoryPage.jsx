@@ -6,12 +6,16 @@ import BottomNav from '../components/organisms/BottomNav';
 import ProductGrid from '../components/organisms/ProductGrid';
 import CategoryPill from '../components/atoms/CategoryPill';
 import SkeletonCard from '../components/atoms/SkeletonCard';
+import QuickCart from '../components/organisms/QuickCart';
 import { useState } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, ShoppingCart } from 'lucide-react';
 
-export default function InventoryPage({ items = [], isLoading, onUpdateStock, onEditItem, onDeleteItem, theme, toggleTheme }) {
+export default function InventoryPage({ items = [], isLoading, onUpdateStock, onEditItem, onDeleteItem, cart, setCart, onBatchDeduct, theme, toggleTheme }) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const cartItemCount = cart ? cart.reduce((sum, entry) => sum + entry.qty, 0) : 0;
 
   // Derive unique categories from live data
   const categories = ['All', ...new Set(items.map(i => i.category))];
@@ -78,10 +82,44 @@ export default function InventoryPage({ items = [], isLoading, onUpdateStock, on
                   : 'No products in this category.'}
               </p>
             )}
-            <ProductGrid products={filtered} onUpdateStock={onUpdateStock} onEditItem={onEditItem} onDeleteItem={onDeleteItem} />
+            <ProductGrid 
+              products={filtered} 
+              onUpdateStock={onUpdateStock} 
+              onEditItem={onEditItem} 
+              onDeleteItem={onDeleteItem} 
+              onAddToCart={(product) => {
+                setCart(prev => {
+                  const existing = prev.find(entry => entry.item.id === product.id);
+                  if (existing) {
+                    if (existing.qty >= product.current_stock) return prev; // Don't add more than stock
+                    return prev.map(entry => entry.item.id === product.id ? { ...entry, qty: entry.qty + 1 } : entry);
+                  }
+                  return [...prev, { item: product, qty: 1 }];
+                });
+                setIsCartOpen(true); // Open the cart when adding an item
+              }}
+            />
           </>
         )}
       </main>
+
+      <button 
+        className="fab fab--cart" 
+        onClick={() => setIsCartOpen(true)}
+        aria-label="Open Quick Cart"
+      >
+        <ShoppingCart size={24} />
+        {cartItemCount > 0 && <span className="cart-badge mono-num">{cartItemCount}</span>}
+      </button>
+
+      <QuickCart 
+        cart={cart || []} 
+        setCart={setCart} 
+        onBatchDeduct={onBatchDeduct} 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+      />
+
       <BottomNav />
     </div>
   );

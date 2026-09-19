@@ -32,8 +32,12 @@ function saveToStorage(items) {
 // ════════════════════════════════════════════════════════════════
 export default function App() {
   const [items, setItems] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   
+  // ── Quick Cart State ──────────────────────────────────────────
+  const [cart, setCart] = useState([]);
+
   // ── Theme State ───────────────────────────────────────────────
   const [theme, setTheme] = useState(() => {
     return window.localStorage.getItem('tindahan_theme') || 'light';
@@ -59,33 +63,64 @@ export default function App() {
         setItems(seedItems);
         saveToStorage(seedItems);
       }
+      
+      try {
+        const storedTx = window.localStorage.getItem('tindahan_tx');
+        if (storedTx) setTransactions(JSON.parse(storedTx));
+      } catch (e) {}
+      
       setIsLoading(false);
     } else {
       // Live Mode: fetch from Express API
-      fetch(`${API_BASE}/api/items`)
-        .then(res => {
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.json();
-        })
-        .then(data => { setItems(data); setIsLoading(false); })
-        .catch(err => {
-          console.error('Failed to load items from API:', err.message);
-          setIsLoading(false);
-        });
+      Promise.all([
+        fetch(`${API_BASE}/api/items`).then(res => res.json()),
+        fetch(`${API_BASE}/api/transactions/recent`).then(res => res.json()).catch(() => []) // fail gracefully
+      ])
+      .then(([itemsData, txData]) => {
+        setItems(itemsData);
+        setTransactions(Array.isArray(txData) ? txData : []);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to load data from API:', err.message);
+        setIsLoading(false);
+      });
     }
   }, []);
 
   // ── Stock update ([-] / [+] buttons) ──────────────────────────
   const handleUpdateStock = async (id, delta) => {
+    let transactionToLog = null;
+    
     setItems(prev => {
-      const updated = prev.map(item =>
-        item.id === id
-          ? { ...item, current_stock: Math.max(0, Number(item.current_stock) + delta) }
-          : item
-      );
+      const updated = prev.map(item => {
+        if (item.id === id) {
+          const newStock = Math.max(0, Number(item.current_stock) + delta);
+          if (delta < 0) {
+            transactionToLog = {
+              id: Date.now(),
+              item_id: item.id,
+              item_name: item.name,
+              qty: Math.abs(delta),
+              total_price: Math.abs(delta) * Number(item.price),
+              created_at: new Date().toISOString()
+            };
+          }
+          return { ...item, current_stock: newStock };
+        }
+        return item;
+      });
       if (IS_DEMO) saveToStorage(updated);
       return updated;
     });
+
+    if (IS_DEMO && transactionToLog) {
+      setTransactions(prev => {
+        const newTx = [transactionToLog, ...prev].slice(0, 15);
+        window.localStorage.setItem('tindahan_tx', JSON.stringify(newTx));
+        return newTx;
+      });
+    }
 
     if (!IS_DEMO) {
       // Best-effort server sync — UI already updated optimistically above
@@ -101,9 +136,87 @@ export default function App() {
         .then(updated => {
           // Reconcile UI with authoritative DB value
           setItems(prev => prev.map(item => item.id === id ? updated : item));
+          if (delta < 0) {
+            // Refetch transactions to stay in sync
+            fetch(`${API_BASE}/api/transactions/recent`)
+              .then(r => r.json())
+              .then(data => setTransactions(data))
+              .catch(e => console.error(e));
+          }
         })
         .catch(err => console.error('Stock sync failed:', err.message));
     }
+  };
+
+  // ── Batch Stock Deduction ───────────────────────────────────────
+  const handleBatchDeduct = async (cartEntries) => {
+    // Format payload
+    const operations = cartEntries.map(entry => ({ id: entry.item.id, qty: entry.qty }));
+
+    // Optimistic UI update
+    setItems(prev => {
+      let updated = [...prev];
+      cartEntries.forEach(entry => {
+        updated = updated.map(item => 
+          item.id === entry.item.id 
+            ? { ...item, current_stock: Math.max(0, Number(item.current_stock) - entry.qty) }
+            : item
+        );
+      });
+      if (IS_DEMO) saveToStorage(updated);
+      return updated;
+    });
+
+    if (IS_DEMO) {
+      const newTransactions = cartEntries.map((entry, idx) => ({
+        id: Date.now() + idx,
+        item_id: entry.item.id,
+        item_name: entry.item.name,
+        qty: entry.qty,
+        total_price: entry.qty * Number(entry.item.price),
+        created_at: new Date().toISOString()
+      }));
+      setTransactions(prev => {
+        const newTx = [...newTransactions.reverse(), ...prev].slice(0, 15);
+        window.localStorage.setItem('tindahan_tx', JSON.stringify(newTx));
+        return newTx;
+      });
+    }
+
+    if (!IS_DEMO) {
+      try {
+        const res = await fetch(`${API_BASE}/api/items/batch-deduct`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(operations),
+        });
+        
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const updatedItems = await res.json();
+        
+        // Reconcile with authoritative DB values
+        setItems(prev => {
+          let reconciled = [...prev];
+          updatedItems.forEach(updated => {
+            reconciled = reconciled.map(item => item.id === updated.id ? updated : item);
+          });
+          return reconciled;
+        });
+        
+        // Refetch transactions to stay in sync
+        fetch(`${API_BASE}/api/transactions/recent`)
+          .then(r => r.json())
+          .then(data => setTransactions(data))
+          .catch(e => console.error(e));
+          
+      } catch (err) {
+        console.error('Batch stock sync failed:', err.message);
+        // Note: Full robust implementation might rollback the optimistic UI update here
+      }
+    }
+    
+    // Clear the cart
+    setCart([]);
   };
 
   // ── Add new product ───────────────────────────────────────────
@@ -189,8 +302,8 @@ export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
-        <Route path="/"          element={<DashboardPage  items={items} isLoading={isLoading} theme={theme} toggleTheme={toggleTheme} />} />
-        <Route path="/inventory" element={<InventoryPage  items={items} isLoading={isLoading} onUpdateStock={handleUpdateStock} onEditItem={handleEditItem} onDeleteItem={handleDeleteItem} theme={theme} toggleTheme={toggleTheme} />} />
+        <Route path="/"          element={<DashboardPage  items={items} transactions={transactions} isLoading={isLoading} theme={theme} toggleTheme={toggleTheme} />} />
+        <Route path="/inventory" element={<InventoryPage  items={items} isLoading={isLoading} onUpdateStock={handleUpdateStock} onEditItem={handleEditItem} onDeleteItem={handleDeleteItem} cart={cart} setCart={setCart} onBatchDeduct={handleBatchDeduct} theme={theme} toggleTheme={toggleTheme} />} />
         <Route path="/add-item"  element={<AddProductPage onAddItem={handleAddItem} theme={theme} toggleTheme={toggleTheme} />} />
       </Routes>
     </BrowserRouter>
