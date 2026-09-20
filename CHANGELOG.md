@@ -5,6 +5,34 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-20 · 10:45] — Session 26: Repository Template Restructuring
+
+**Summary:** Restructured the monolithic repository to strictly match the university's final project template by splitting into a `/client` and `/server` monorepo structure.
+
+### 🆕 Files Created (Imported)
+
+| File | Contents |
+|------|---------|
+| `AI-USAGE.md` | Template grading rubric for AI assistance. |
+| `START-HERE.md` | Template instructions. |
+| `docs/*` | All project planning docs and weekly reports templates. |
+
+### ✏️ Files Modified
+
+#### `README.md`
+- Fixed typo in the Live URL link.
+- Updated the "Project structure" diagram and logo image path to reflect the new `client/` and `docs/` paths.
+
+#### `.github/workflows/deploy.yml`
+- Updated `working-directory` to `./client` so GitHub Actions correctly builds the nested React frontend.
+
+### 🗑️ Files Moved/Deleted
+
+- Moved all React frontend code (`src/`, `public/`, `index.html`, `vite.config.js`, `package.json`, `.env`) into `client/`.
+- Deleted the old `journal/` folder after migrating its contents into the new `docs/04-weekly-reports.md` format.
+
+---
+
 ## [2026-09-19 · 23:10] — Session 25: Inventory Analytics, Quick Cart & Recent Transactions
 
 **Summary:** Implemented Week 3 features transforming the app into a POS-style system. Added Dashboard Analytics (Total Value & Recharts Donut), a Quick Cart sidebar for batch stock deductions, and a Recent Transactions feed to audit sales history.

@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/logo.png" alt="TindahanTrack Logo" width="120" style="border-radius: 20px;" />
+  <img src="client/public/logo.png" alt="TindahanTrack Logo" width="120" style="border-radius: 20px;" />
   <br/>
   <h1>TindahanTrack</h1>
 </div>
@@ -146,22 +146,23 @@ Not automated here — most hosts (Render, Railway) deploy straight from your re
 
 ```
 TindahanTrack/
-├── src/                        # React frontend (Vite entry point)
-│   ├── components/
-│   │   ├── atoms/              # Smallest pieces: Button, Input, StockBadge, Toast…
-│   │   ├── molecules/          # Small groups: ProductCard, AlertRow, SummaryCard…
-│   │   └── organisms/          # Full sections: Header, BottomNav, ProductGrid…
-│   ├── pages/                  # Top-level route screens
-│   │   ├── DashboardPage.jsx   # / — low-stock alert hub
-│   │   ├── InventoryPage.jsx   # /inventory — filterable, searchable product grid
-│   │   └── AddProductPage.jsx  # /add-item — validated add-product form
-│   ├── App.jsx                 # BrowserRouter, global state (items, isLoading)
-│   ├── styles.css              # All design tokens + component CSS (no framework)
-│   └── main.jsx                # React 18 createRoot entry point
+├── client/                     # React frontend (Vite entry point)
+│   ├── src/                    
+│   │   ├── components/
+│   │   │   ├── atoms/          # Smallest pieces: Button, Input, StockBadge, Toast…
+│   │   │   ├── molecules/      # Small groups: ProductCard, AlertRow, SummaryCard…
+│   │   │   └── organisms/      # Full sections: Header, BottomNav, ProductGrid…
+│   │   ├── pages/              # Top-level route screens
+│   │   │   ├── DashboardPage.jsx   # / — low-stock alert hub
+│   │   │   ├── InventoryPage.jsx   # /inventory — filterable, searchable product grid
+│   │   │   └── AddProductPage.jsx  # /add-item — validated add-product form
+│   │   ├── App.jsx             # BrowserRouter, global state (items, isLoading)
+│   │   ├── styles.css          # All design tokens + component CSS (no framework)
+│   │   └── main.jsx            # React 18 createRoot entry point
 ├── server/
 │   ├── app.js                  # Express: GET/POST /api/items, PATCH /api/items/:id/stock, DELETE
 │   └── schema.sql              # items table + auto updated_at trigger + 20 seed rows
-├── final-project-planning/     # All planning docs and weekly submissions
+├── docs/                       # All planning docs and weekly submissions
 │   ├── 01-proposal.md
 │   ├── 02-wireframes.md
 │   ├── 03-design-system.md
