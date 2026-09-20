@@ -7,7 +7,7 @@
 A mobile-first inventory and stock management dashboard designed specifically for neighborhood sari-sari store owners.
 
 **Live site:** [https://kevv1011.github.io/TinadahanTrack/](https://kevv1011.github.io/TinadahanTrack/)
-**API:** [https://baggy-tusk-eradicate.ngrok-free.dev/healthz](https://baggy-tusk-eradicate.ngrok-free.dev/healthz)
+**Live API (temporary):** [https://baggy-tusk-eradicate.ngrok-free.dev/healthz](https://baggy-tusk-eradicate.ngrok-free.dev/healthz) *(available while the local Express server and ngrok tunnel are running)*
 **Demo video:** *(link — to be added before finals)*
 
 ---
@@ -23,19 +23,21 @@ A mobile-first inventory and stock management dashboard designed specifically fo
 - **Frontend:** React 19, Vite, React Router, Recharts, Lucide icons, and mobile-first vanilla CSS.
 - **Backend:** Node.js, Express, `pg`, Multer uploads, and Neon PostgreSQL.
 
-## Demo mode
+## Demo mode — recommended evaluation path
 
-Demo Mode is available for offline UI testing and is controlled by the `VITE_USE_MOCK_API` frontend environment variable. The live deployment uses the Express API through its `ngrok` tunnel.
+The GitHub Pages **Live site** is deployed in Demo Mode so it remains fully interactive even when the temporary ngrok tunnel is offline. It supports inventory changes, POS checkout, receipts, transaction history, and analytics using browser `localStorage`; no installation, database, or server is required for evaluation.
+
+The same dual-mode client can connect to the live Neon database through the local Express API and ngrok tunnel when `VITE_USE_MOCK_API=false`.
 
 | `VITE_USE_MOCK_API` | Behaviour |
 |---------------------|-----------|
-| `true` or unset     | The app runs purely in the browser using `localStorage`. No backend is needed. |
+| `true` or unset     | The app runs purely in the browser using `localStorage`. This is the GitHub Pages evaluation experience. |
 | `false`             | The app makes live network requests to the Express API through the configured `ngrok` URL. |
 
 ## Running it yourself
 
 ### Run just the frontend (Demo Mode)
-You don't need a database to test the UI! Just run the client:
+You don't need a database, Express server, or ngrok to test the full UI flow:
 ```bash
 cd client
 npm install
@@ -60,7 +62,7 @@ npm install
 npm run dev
 ```
 
-### Run the live stack with ngrok
+### Run the live Neon stack with ngrok
 
 To expose the local Express API for the deployed client, create `server/.env` with a valid Neon `DATABASE_URL`. In `client/.env`, set:
 
@@ -104,8 +106,8 @@ For the deployed client to access the tunnel, `server/.env` must set `CORS_ORIGI
 
 ## Deploying
 
-- **Client:** The React frontend is deployed automatically to GitHub Pages using the `.github/workflows/deploy.yml` GitHub Actions pipeline.
-- **API:** The Express backend runs locally and is exposed to the internet through an `ngrok` secure tunnel, connecting directly to the live Neon PostgreSQL database.
+- **Client:** The React frontend is deployed automatically to GitHub Pages using the `.github/workflows/deploy.yml` GitHub Actions pipeline. It defaults to self-contained Demo Mode for reliable evaluation.
+- **API:** The Express backend runs locally and can be exposed to the internet through an `ngrok` secure tunnel, connecting directly to the live Neon PostgreSQL database while the local process is running.
 
 ## Project structure
 
@@ -124,7 +126,7 @@ TindahanTrack/
 
 ## Architecture
 
-The React frontend owns UI state and route navigation. In live mode, it sends REST requests to the local Express API on port 3001 through the configured `ngrok` tunnel; Express connects to Neon PostgreSQL. In Demo Mode, selected through `VITE_USE_MOCK_API`, the frontend instead stores inventory and transactions in browser `localStorage`.
+The React frontend owns UI state and route navigation. Its GitHub Pages deployment uses Demo Mode and stores inventory and transactions in browser `localStorage`, ensuring the app works independently for reviewers. In live mode, selected through `VITE_USE_MOCK_API=false`, the frontend sends REST requests to the local Express API on port 3001 through the configured ngrok tunnel; Express connects to Neon PostgreSQL.
 
 ## What I would do next
 

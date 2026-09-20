@@ -7,15 +7,18 @@ import ProductGrid from '../components/organisms/ProductGrid';
 import CategoryPill from '../components/atoms/CategoryPill';
 import SkeletonCard from '../components/atoms/SkeletonCard';
 import QuickCart from '../components/organisms/QuickCart';
+import ApiStatusNotice from '../components/atoms/ApiStatusNotice';
 import { useState } from 'react';
 import { Search, X, ShoppingCart } from 'lucide-react';
 
-export default function InventoryPage({ items = [], isLoading, onUpdateStock, onEditItem, onDeleteItem, cart, setCart, onBatchDeduct, theme, toggleTheme }) {
+export default function InventoryPage({ items = [], isLoading, apiError, onRetry, onUpdateStock, onEditItem, onDeleteItem, cart, setCart, onBatchDeduct, theme, toggleTheme }) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [showCartHint, setShowCartHint] = useState(() => window.localStorage.getItem('tindahan_cart_hint_dismissed') !== 'true');
 
   const cartItemCount = cart ? cart.reduce((sum, entry) => sum + entry.qty, 0) : 0;
+  const cartTotal = cart ? cart.reduce((sum, entry) => sum + Number(entry.item.price) * entry.qty, 0) : 0;
 
   // Derive unique categories from live data
   const categories = ['All', ...new Set(items.map(i => i.category))];
@@ -29,6 +32,17 @@ export default function InventoryPage({ items = [], isLoading, onUpdateStock, on
     <div className="page">
       <Header theme={theme} toggleTheme={toggleTheme} />
       <main className="inventory" aria-label="Inventory">
+        <ApiStatusNotice message={apiError} onRetry={onRetry} />
+
+        {showCartHint && (
+          <aside className="inventory__cart-hint">
+            <span>Tip: tap a product's cart icon to begin a sale.</span>
+            <button onClick={() => {
+              window.localStorage.setItem('tindahan_cart_hint_dismissed', 'true');
+              setShowCartHint(false);
+            }} aria-label="Dismiss cart tip">Got it</button>
+          </aside>
+        )}
 
         {/* ── Sticky toolbar: category pills + search ── */}
         <div className="inventory__toolbar">
@@ -110,6 +124,7 @@ export default function InventoryPage({ items = [], isLoading, onUpdateStock, on
       >
         <ShoppingCart size={24} />
         {cartItemCount > 0 && <span className="cart-badge mono-num">{cartItemCount}</span>}
+        {cartItemCount > 0 && <span className="fab--cart__total mono-num">₱{cartTotal.toFixed(0)}</span>}
       </button>
 
       <QuickCart 

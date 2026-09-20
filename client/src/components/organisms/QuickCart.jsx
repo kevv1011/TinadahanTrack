@@ -1,11 +1,13 @@
 import { X, ShoppingCart } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import Button from '../atoms/Button';
+import ReceiptModal from './ReceiptModal';
 
 export default function QuickCart({ cart, setCart, onBatchDeduct, isOpen, onClose }) {
   const [cashTendered, setCashTendered] = useState('');
   const [checkoutError, setCheckoutError] = useState('');
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [receipt, setReceipt] = useState(null);
 
   const total = useMemo(
     () => cart.reduce((sum, entry) => sum + Number(entry.item.price) * entry.qty, 0),
@@ -47,10 +49,15 @@ export default function QuickCart({ cart, setCart, onBatchDeduct, isOpen, onClos
 
     setCheckoutError('');
     setIsCheckingOut(true);
-    const result = await onBatchDeduct(cart);
+    const result = await onBatchDeduct(cart, {
+      total,
+      cashTendered: tendered,
+      change: Math.max(change, 0),
+    });
     setIsCheckingOut(false);
 
     if (result?.ok) {
+      setReceipt(result.receipt);
       onClose();
     } else {
       setCheckoutError(result?.error || 'Checkout could not be completed. Please try again.');
@@ -146,6 +153,7 @@ export default function QuickCart({ cart, setCart, onBatchDeduct, isOpen, onClos
           </Button>
         </footer>
       </aside>
+      <ReceiptModal receipt={receipt} onClose={() => setReceipt(null)} />
     </>
   );
 }

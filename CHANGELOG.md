@@ -8,10 +8,15 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 ### Added
 
 - **POS Quick Cart checkout:** Added sale totals, cash-tendered input, calculated change, checkout validation, and an in-progress checkout state. Live checkout reconciles server data and restores inventory if the batch deduction request fails; Demo Mode continues to persist inventory and sales transactions in `localStorage`.
+- **Presentation polish:** Added completed-sale receipts, live API error/retry notices, a first-use cart hint, cart-total feedback, and a warmer visual system for the checkout flow.
+- **Sales analytics:** Added seven-day revenue, today/week sales metrics, a revenue chart, and fast-moving-product rankings. The dashboard derives analytics from local transactions in Demo Mode and the new read-only API endpoint in live mode.
 
 ### Changed
 
 - **Backend deployment:** Replaced the planned Render deployment with a local Express instance exposed publicly through an `ngrok` secure tunnel. The tunnel connects the API to the existing Neon PostgreSQL database for the final submission.
+- **Dashboard layout:** Moved Total Inventory Value into the top metric group so the Stock Health chart can use a full-width section without unused desktop space.
+- **Evaluation documentation:** Clarified that GitHub Pages provides the self-contained Demo Mode evaluation path, while ngrok live mode is temporary and optional.
+- **Week 3 documentation:** Separated the Week 3 incremental report and reflection journal into dedicated documents using the course report templates.
 
 ### Fixed
 

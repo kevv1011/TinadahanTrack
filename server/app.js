@@ -86,6 +86,43 @@ app.get('/api/stats', async (_req, res) => {
 });
 
 // ── GET /api/items ────────────────────────────────────────────────
+app.get('/api/analytics', async (_req, res) => {
+  try {
+    const [summaryResult, trendResult, fastMoversResult] = await Promise.all([
+      pool.query(`
+        SELECT
+          COALESCE(SUM(total_price) FILTER (WHERE created_at >= CURRENT_DATE), 0) AS today_revenue,
+          COALESCE(SUM(total_price) FILTER (WHERE created_at >= CURRENT_DATE - INTERVAL '6 days'), 0) AS week_revenue,
+          COALESCE(SUM(qty) FILTER (WHERE created_at >= CURRENT_DATE - INTERVAL '6 days'), 0) AS week_items_sold
+        FROM transactions;
+      `),
+      pool.query(`
+        SELECT TO_CHAR(days.day, 'Dy') AS label, COALESCE(SUM(t.total_price), 0) AS revenue
+        FROM generate_series(CURRENT_DATE - INTERVAL '6 days', CURRENT_DATE, INTERVAL '1 day') AS days(day)
+        LEFT JOIN transactions t ON t.created_at::date = days.day::date
+        GROUP BY days.day
+        ORDER BY days.day;
+      `),
+      pool.query(`
+        SELECT item_id, item_name, SUM(qty) AS quantity_sold, SUM(total_price) AS revenue
+        FROM transactions
+        WHERE created_at >= CURRENT_DATE - INTERVAL '6 days'
+        GROUP BY item_id, item_name
+        ORDER BY quantity_sold DESC, revenue DESC
+        LIMIT 5;
+      `),
+    ]);
+
+    res.json({
+      ...summaryResult.rows[0],
+      revenue_trend: trendResult.rows,
+      fast_movers: fastMoversResult.rows,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/items', async (_req, res) => {
   try {
     const { rows } = await pool.query('SELECT * FROM items ORDER BY id;');

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import SummaryCard from '../molecules/SummaryCard';
 
 const IS_DEMO = import.meta.env.VITE_USE_MOCK_API !== 'false';
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
@@ -72,13 +71,6 @@ export default function StatsPanel({ items }) {
 
   return (
     <section className="stats-panel">
-      <div className="stats-panel__summary">
-        <SummaryCard 
-          label="Total Inventory Value" 
-          value={`₱${stats.total_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} 
-        />
-      </div>
-      
       <div className="stats-panel__chart">
         <h3 className="stats-panel__chart-title">Stock Health</h3>
         {stats.healthy_count === 0 && stats.low_stock_count === 0 ? (

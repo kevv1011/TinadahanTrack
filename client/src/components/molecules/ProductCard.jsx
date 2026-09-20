@@ -7,6 +7,16 @@ import StockBadge from '../atoms/StockBadge';
 import Button from '../atoms/Button';
 import EditModal from './EditModal';
 
+const CATEGORY_MARKS = {
+  Snacks: '🍘',
+  'Canned Goods': '🥫',
+  Beverages: '🥤',
+  Noodles: '🍜',
+  Dairy: '🥛',
+  'Personal Care': '🧴',
+  Household: '🧺',
+};
+
 export default function ProductCard({ product, onUpdateStock, onEditItem, onDeleteItem, onAddToCart }) {
   const { id, name, category, price, current_stock, min_threshold, image_url } = product;
   const [showEdit, setShowEdit] = useState(false);
@@ -29,7 +39,7 @@ export default function ProductCard({ product, onUpdateStock, onEditItem, onDele
         <div className="product-card__image">
           {image_url
             ? <img src={image_url} alt={name} className="product-card__img" />
-            : <div className="product-card__img-placeholder" aria-hidden="true">📦</div>
+            : <div className="product-card__img-placeholder" aria-label={`${category} product`} role="img">{CATEGORY_MARKS[category] || '📦'}</div>
           }
         </div>
 

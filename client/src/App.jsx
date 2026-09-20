@@ -1,7 +1,7 @@
 // Root App component — owns global state (items, isLoading)
 // Demo Mode: when VITE_USE_MOCK_API !== 'false', all data lives in localStorage.
 // Live Mode: when VITE_USE_MOCK_API === 'false', data is fetched from the Express API.
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import DashboardPage from './pages/DashboardPage';
 import InventoryPage from './pages/InventoryPage';
@@ -35,6 +35,7 @@ export default function App() {
   const [items, setItems] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [apiError, setApiError] = useState('');
   
   // ── Quick Cart State ──────────────────────────────────────────
   const [cart, setCart] = useState([]);
@@ -52,6 +53,28 @@ export default function App() {
   const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
+
+  const loadLiveData = useCallback(async () => {
+    setIsLoading(true);
+    setApiError('');
+    try {
+      const [itemsResponse, transactionsResponse] = await Promise.all([
+        fetch(`${API_BASE}/api/items`, { headers: NGROK_HEADERS }),
+        fetch(`${API_BASE}/api/transactions/recent`, { headers: NGROK_HEADERS }),
+      ]);
+      if (!itemsResponse.ok) throw new Error(`Items request failed (${itemsResponse.status})`);
+
+      const itemsData = await itemsResponse.json();
+      const txData = transactionsResponse.ok ? await transactionsResponse.json() : [];
+      setItems(itemsData);
+      setTransactions(Array.isArray(txData) ? txData : []);
+    } catch (err) {
+      console.error('Failed to load data from API:', err.message);
+      setApiError('Unable to reach the live API. Check the ngrok tunnel, then try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   // ── Initial load ──────────────────────────────────────────────
   useEffect(() => {
@@ -72,22 +95,9 @@ export default function App() {
       
       setIsLoading(false);
     } else {
-      // Live Mode: fetch from Express API
-      Promise.all([
-        fetch(`${API_BASE}/api/items`, { headers: NGROK_HEADERS }).then(res => res.json()),
-        fetch(`${API_BASE}/api/transactions/recent`, { headers: NGROK_HEADERS }).then(res => res.json()).catch(() => []) // fail gracefully
-      ])
-      .then(([itemsData, txData]) => {
-        setItems(itemsData);
-        setTransactions(Array.isArray(txData) ? txData : []);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.error('Failed to load data from API:', err.message);
-        setIsLoading(false);
-      });
+      loadLiveData();
     }
-  }, []);
+  }, [loadLiveData]);
 
   // ── Stock update ([-] / [+] buttons) ──────────────────────────
   const handleUpdateStock = async (id, delta) => {
@@ -150,10 +160,18 @@ export default function App() {
   };
 
   // ── Batch Stock Deduction ───────────────────────────────────────
-  const handleBatchDeduct = async (cartEntries) => {
+  const handleBatchDeduct = async (cartEntries, payment = {}) => {
     // Format payload
     const operations = cartEntries.map(entry => ({ id: entry.item.id, qty: entry.qty }));
     const previousItems = items;
+    const total = Number(payment.total) || cartEntries.reduce((sum, entry) => sum + Number(entry.item.price) * entry.qty, 0);
+    const receipt = {
+      items: cartEntries.map(({ item, qty }) => ({ name: item.name, qty, price: Number(item.price) })),
+      total,
+      cashTendered: Number(payment.cashTendered) || total,
+      change: Number(payment.change) || 0,
+      createdAt: new Date().toISOString(),
+    };
 
     // Optimistic UI update
     setItems(prev => {
@@ -184,7 +202,7 @@ export default function App() {
         return newTx;
       });
       setCart([]);
-      return { ok: true };
+      return { ok: true, receipt };
     }
 
     if (!IS_DEMO) {
@@ -213,7 +231,7 @@ export default function App() {
           .then(data => setTransactions(data))
           .catch(e => console.error(e));
         setCart([]);
-        return { ok: true };
+        return { ok: true, receipt };
       } catch (err) {
         console.error('Batch stock sync failed:', err.message);
         setItems(previousItems);
@@ -307,8 +325,8 @@ export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
-        <Route path="/"          element={<DashboardPage  items={items} transactions={transactions} isLoading={isLoading} theme={theme} toggleTheme={toggleTheme} />} />
-        <Route path="/inventory" element={<InventoryPage  items={items} isLoading={isLoading} onUpdateStock={handleUpdateStock} onEditItem={handleEditItem} onDeleteItem={handleDeleteItem} cart={cart} setCart={setCart} onBatchDeduct={handleBatchDeduct} theme={theme} toggleTheme={toggleTheme} />} />
+        <Route path="/"          element={<DashboardPage  items={items} transactions={transactions} isLoading={isLoading} apiError={apiError} onRetry={loadLiveData} theme={theme} toggleTheme={toggleTheme} />} />
+        <Route path="/inventory" element={<InventoryPage  items={items} isLoading={isLoading} apiError={apiError} onRetry={loadLiveData} onUpdateStock={handleUpdateStock} onEditItem={handleEditItem} onDeleteItem={handleDeleteItem} cart={cart} setCart={setCart} onBatchDeduct={handleBatchDeduct} theme={theme} toggleTheme={toggleTheme} />} />
         <Route path="/add-item"  element={<AddProductPage onAddItem={handleAddItem} theme={theme} toggleTheme={toggleTheme} />} />
       </Routes>
     </BrowserRouter>

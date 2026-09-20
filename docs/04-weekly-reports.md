@@ -8,6 +8,18 @@ needs.
 
 ---
 
+## Week of 2026-09-24 (Week 3)
+
+**Done.** Completed the Point of Sale Quick Cart with batch stock deduction, cash tendering, calculated change, a checkout receipt, and transaction logging. Added dashboard analytics for inventory value, revenue, seven-day sales trends, and fast-moving products. Added live API retry feedback, clearer cart guidance, category-aware image fallbacks, and a warmer visual design system. Configured the frontend to send ngrok's browser-warning bypass header for every API request and documented the temporary ngrok architecture.
+
+**Stuck.** ngrok's free-tier browser warning returned HTML to frontend `GET` requests instead of JSON, which made live inventory data fail to display even though the API was reachable. Adding the `ngrok-skip-browser-warning` request header to all client API calls resolved the issue. The temporary tunnel also highlighted that the hosted client must retain Demo Mode as the reliable evaluation fallback.
+
+**Hours.** 14
+
+**Next.** Record the demo video, verify the final GitHub Pages Demo Mode flow on a clean browser profile, and move the API to a dedicated cloud host when platform availability stabilizes.
+
+---
+
 ## Week of 2026-09-18 (Week 2)
 
 **Done.** Replaced all the stubbed UI buttons (edit/delete) with fully wired modals. Hooked up the React frontend to the Express backend so the app now reads and writes directly to the Neon PostgreSQL database. Created the `PUT /api/items/:id` and `DELETE /api/items/:id` endpoints.
