@@ -30,9 +30,11 @@ jobs:
           node-version: 20
           
       - name: Install dependencies
+        working-directory: ./client
         run: npm install
         
       - name: Build with base path
+        working-directory: ./client
         run: npm run build -- --base=/${{ github.event.repository.name }}/
         
       - name: Setup Pages
@@ -41,7 +43,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './client/dist'
           
       - name: Deploy to GitHub Pages
         id: deployment
