@@ -15,6 +15,7 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ### Changed
 
+- **Live-mode setup documentation:** Clarified the separate Express, desktop-client, and ngrok terminal steps, including PowerShell and CMD commands that work from any installed `ngrok.exe` path.
 - **Backend deployment:** Replaced the planned Render deployment with a local Express instance exposed publicly through an `ngrok` secure tunnel. The tunnel connects the API to the existing Neon PostgreSQL database for the final submission.
 - **Dashboard layout:** Moved Total Inventory Value into the top metric group so the Stock Health chart can use a full-width section without unused desktop space.
 - **Evaluation documentation:** Clarified that GitHub Pages provides the self-contained Demo Mode evaluation path, while ngrok live mode is temporary and optional.

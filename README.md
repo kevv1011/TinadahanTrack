@@ -71,28 +71,43 @@ VITE_USE_MOCK_API=false
 VITE_API_BASE_URL=https://your-ngrok-subdomain.ngrok-free.dev
 ```
 
-Then open three terminals:
+Then open three **separate PowerShell terminals** and leave all three running while you use Live Mode. These commands assume the repository was saved at `D:\TindahanTrack`.
 
-**Terminal 1 â€” Express API:**
-```bash
-cd server
-npm install
-npm run dev
-```
+**Terminal 1 - Express API (required for live data):**
 
-**Terminal 2 â€” React client:**
-```bash
-cd client
-npm install
-npm run dev
-```
-
-**Terminal 3 â€” ngrok tunnel (PowerShell):**
 ```powershell
-& "C:\path\to\ngrok.exe" http 3001
+cd D:\TindahanTrack\server
+npm install
+npm run dev
 ```
 
-Copy ngrok's public HTTPS forwarding URL into `VITE_API_BASE_URL`, then restart the Vite client. Free ngrok URLs can change whenever the tunnel restarts; update the environment variable and rebuild/redeploy the GitHub Pages client when this happens.
+**Terminal 2 - Desktop/laptop browser app:**
+
+```powershell
+cd D:\TindahanTrack\client
+npm install
+npm run dev
+```
+
+Open the local Vite address that appears in this terminal (normally `http://localhost:5173`) in a desktop or laptop browser. This terminal is not needed when testing the already-installed Android APK.
+
+**Terminal 3 - ngrok tunnel (required for the Android APK or anyone outside your local network):**
+
+Open a fresh PowerShell window. You may be in any folder. The part inside the quotation marks must be the actual location of `ngrok.exe` on that computer. For example, if it is stored in `D:\NGROK`, copy and paste:
+
+```powershell
+& "D:\NGROK\ngrok.exe" http 3001
+```
+
+If ngrok is stored somewhere else, such as the `C:` drive, replace only the quoted path with its real location:
+
+```powershell
+& "C:\path\where\ngrok\is\saved\ngrok.exe" http 3001
+```
+
+ngrok will show a line like `Forwarding https://example.ngrok-free.dev -> http://localhost:3001`. Copy the `https://...ngrok-free.dev` portion (do **not** include `-> http://localhost:3001`) into `client/.env` as `VITE_API_BASE_URL`, then restart the Vite client.
+
+Free ngrok URLs can change whenever the tunnel restarts. Update `VITE_API_BASE_URL` each time it changes. For the Android app, run `npm run build`, `npx cap sync android`, and build/install a new APK after changing the URL so the new address is bundled into the app.
 
 For the deployed client to access the tunnel, `server/.env` must set `CORS_ORIGINS` to include both `http://localhost:5173` and `https://kevv1011.github.io`. Never commit `server/.env`; anyone running a downloaded copy needs their own Neon connection string.
 
