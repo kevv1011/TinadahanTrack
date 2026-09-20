@@ -11,6 +11,8 @@ repository, so it is versioned alongside the thing it describes.
 | [04-weekly-reports.md](04-weekly-reports.md) | a few lines a week | every week |
 | [05-demo-video.md](05-demo-video.md) | the recording, and its plan | the end |
 | [06-security-and-privacy.md](06-security-and-privacy.md) | what you checked before making this public | before your first push |
+| [week2-REPORT.md](week2-REPORT.md) | Week 2 incremental report | Week 2 |
+| [week2-JOURNAL.md](week2-JOURNAL.md) | Week 2 reflection journal | Week 2 |
 | [week-3REPORT.md](week-3REPORT.md) | Week 3 incremental report | Week 3 |
 | [week-3JOURNAL.md](week-3JOURNAL.md) | Week 3 reflection journal | Week 3 |
 

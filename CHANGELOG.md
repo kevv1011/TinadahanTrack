@@ -7,6 +7,7 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ### Added
 
+- **Week 2 documentation:** Added separate Week 2 incremental report and reflection journal documents.
 - **POS Quick Cart checkout:** Added sale totals, cash-tendered input, calculated change, checkout validation, and an in-progress checkout state. Live checkout reconciles server data and restores inventory if the batch deduction request fails; Demo Mode continues to persist inventory and sales transactions in `localStorage`.
 - **Presentation polish:** Added completed-sale receipts, live API error/retry notices, a first-use cart hint, cart-total feedback, and a warmer visual system for the checkout flow.
 - **Sales analytics:** Added seven-day revenue, today/week sales metrics, a revenue chart, and fast-moving-product rankings. The dashboard derives analytics from local transactions in Demo Mode and the new read-only API endpoint in live mode.
