@@ -26,6 +26,10 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 - **Mobile POS checkout:** Raised the Quick Cart above the fixed bottom navigation and added safe-area-aware footer spacing so the Complete Sale button remains visible and tappable on Android.
 - **ngrok API responses:** Added the `ngrok-skip-browser-warning` header to every client API request so ngrok returns API JSON rather than its browser warning page.
 
+### Removed
+
+- **Unsubmitted coursework drafts:** Removed the Week 2 and Week 3 reports and reflection journals from the public repository while preserving local-only copies for later private-workspace submission.
+
 ---
 
 ## [2026-09-20 · 11:45] — Session 27: README Complete Rewrite & Mockup Screenshots

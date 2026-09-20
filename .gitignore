@@ -17,6 +17,12 @@ dist-ssr
 .env.*
 !.env.example
 
+# Draft Week 2 and Week 3 coursework stays in the local workspace only.
+docs/week2-REPORT.md
+docs/week2-JOURNAL.md
+docs/week-3REPORT.md
+docs/week-3JOURNAL.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
