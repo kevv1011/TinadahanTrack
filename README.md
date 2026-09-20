@@ -18,7 +18,7 @@ A mobile-first inventory and stock management dashboard designed specifically fo
 
 - **Live Inventory Tracking:** Instantly view, add, edit, and delete products to keep your store's inventory perfectly in sync.
 - **Low-Stock Alerts:** Automatically flags items that fall below their minimum threshold so you always know exactly what to restock.
-- **POS Quick Cart:** Batch-deduct items effortlessly through a sliding cart interface to quickly log sales and checkout customers.
+- **Point of Sale (POS) Quick Cart:** Complete sales through a sliding cart with batch stock deductions, a cash-tendered calculator, automatic change generation, and live transaction logging.
 
 ## Built with
 
@@ -97,7 +97,6 @@ The React frontend handles all user interactions, UI state, and route navigation
 ## What I would do next
 
 - Transition the backend from a local `ngrok` tunnel to a dedicated cloud host once platform availability stabilizes.
-- Expand the POS Quick Cart into a full checkout system with sales receipts.
 - Implement user authentication so multiple store owners can securely manage their own distinct inventories.
 
 ## Author & Licence
