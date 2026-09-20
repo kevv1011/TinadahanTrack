@@ -5,6 +5,22 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-20 · 11:45] — Session 27: README Complete Rewrite & Mockup Screenshots
+
+**Summary:** Completely rewrote the root `README.md` to strictly adhere to the 7 required sections from the course's Week 2 documentation guide. Also embedded the final mockup screenshots for both desktop and mobile views.
+
+### 🆕 Files Created
+- `client/public/web (1-4).png` - Desktop mockups.
+- `client/public/app (1-3).png` - Mobile mockups.
+
+### ✏️ Files Modified
+
+#### `README.md`
+- Added the 7 required headings: Overview, Setup and installation, How to run it, Features and usage, Project structure, Screenshots, and Known issues.
+- Updated environment variable placeholders and instructions for running the split frontend and backend servers concurrently.
+
+---
+
 ## [2026-09-20 · 10:45] — Session 26: Repository Template Restructuring
 
 **Summary:** Restructured the monolithic repository to strictly match the university's final project template by splitting into a `/client` and `/server` monorepo structure.
