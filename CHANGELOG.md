@@ -13,6 +13,10 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 - **Backend deployment:** Replaced the planned Render deployment with a local Express instance exposed publicly through an `ngrok` secure tunnel. The tunnel connects the API to the existing Neon PostgreSQL database for the final submission.
 
+### Fixed
+
+- **ngrok API responses:** Added the `ngrok-skip-browser-warning` header to every client API request so ngrok returns API JSON rather than its browser warning page.
+
 ---
 
 ## [2026-09-20 · 11:45] — Session 27: README Complete Rewrite & Mockup Screenshots

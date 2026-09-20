@@ -6,6 +6,7 @@ import { useRef, useState } from 'react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 const IS_DEMO  = import.meta.env.VITE_USE_MOCK_API !== 'false';
+const NGROK_HEADERS = { 'ngrok-skip-browser-warning': '69420' };
 
 export default function ImageUploader({ imageUrl, onUpload }) {
   const inputRef  = useRef(null);
@@ -29,7 +30,11 @@ export default function ImageUploader({ imageUrl, onUpload }) {
         // Live mode: POST to /api/upload
         const formData = new FormData();
         formData.append('image', file);
-        const res = await fetch(`${API_BASE}/api/upload`, { method: 'POST', body: formData });
+        const res = await fetch(`${API_BASE}/api/upload`, {
+          method: 'POST',
+          headers: NGROK_HEADERS,
+          body: formData,
+        });
         if (!res.ok) throw new Error(`Upload failed (${res.status})`);
         const { url } = await res.json();
         onUpload(`${API_BASE}${url}`);

@@ -4,6 +4,7 @@ import SummaryCard from '../molecules/SummaryCard';
 
 const IS_DEMO = import.meta.env.VITE_USE_MOCK_API !== 'false';
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const NGROK_HEADERS = { 'ngrok-skip-browser-warning': '69420' };
 
 export default function StatsPanel({ items }) {
   const [stats, setStats] = useState({
@@ -37,7 +38,7 @@ export default function StatsPanel({ items }) {
       setIsLoading(false);
     } else {
       // Fetch from API
-      fetch(`${API_BASE}/api/stats`)
+      fetch(`${API_BASE}/api/stats`, { headers: NGROK_HEADERS })
         .then(res => {
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           return res.json();

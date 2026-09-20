@@ -13,6 +13,7 @@ import './styles.css';
 const IS_DEMO = import.meta.env.VITE_USE_MOCK_API !== 'false';
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 const LS_KEY = 'tindahan_items';
+const NGROK_HEADERS = { 'ngrok-skip-browser-warning': '69420' };
 
 // ── localStorage helpers ────────────────────────────────────────
 function loadFromStorage() {
@@ -73,8 +74,8 @@ export default function App() {
     } else {
       // Live Mode: fetch from Express API
       Promise.all([
-        fetch(`${API_BASE}/api/items`).then(res => res.json()),
-        fetch(`${API_BASE}/api/transactions/recent`).then(res => res.json()).catch(() => []) // fail gracefully
+        fetch(`${API_BASE}/api/items`, { headers: NGROK_HEADERS }).then(res => res.json()),
+        fetch(`${API_BASE}/api/transactions/recent`, { headers: NGROK_HEADERS }).then(res => res.json()).catch(() => []) // fail gracefully
       ])
       .then(([itemsData, txData]) => {
         setItems(itemsData);
@@ -126,7 +127,7 @@ export default function App() {
       // Best-effort server sync — UI already updated optimistically above
       fetch(`${API_BASE}/api/items/${id}/stock`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...NGROK_HEADERS, 'Content-Type': 'application/json' },
         body: JSON.stringify({ delta }),
       })
         .then(res => {
@@ -138,7 +139,7 @@ export default function App() {
           setItems(prev => prev.map(item => item.id === id ? updated : item));
           if (delta < 0) {
             // Refetch transactions to stay in sync
-            fetch(`${API_BASE}/api/transactions/recent`)
+            fetch(`${API_BASE}/api/transactions/recent`, { headers: NGROK_HEADERS })
               .then(r => r.json())
               .then(data => setTransactions(data))
               .catch(e => console.error(e));
@@ -190,7 +191,7 @@ export default function App() {
       try {
         const res = await fetch(`${API_BASE}/api/items/batch-deduct`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { ...NGROK_HEADERS, 'Content-Type': 'application/json' },
           body: JSON.stringify(operations),
         });
         
@@ -207,7 +208,7 @@ export default function App() {
         });
         
         // Refetch transactions to stay in sync
-        fetch(`${API_BASE}/api/transactions/recent`)
+        fetch(`${API_BASE}/api/transactions/recent`, { headers: NGROK_HEADERS })
           .then(r => r.json())
           .then(data => setTransactions(data))
           .catch(e => console.error(e));
@@ -243,7 +244,7 @@ export default function App() {
       try {
         const res = await fetch(`${API_BASE}/api/items`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { ...NGROK_HEADERS, 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...fields,
             price: Number(fields.price),
@@ -272,7 +273,7 @@ export default function App() {
       try {
         const res = await fetch(`${API_BASE}/api/items/${id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { ...NGROK_HEADERS, 'Content-Type': 'application/json' },
           body: JSON.stringify(fields),
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -294,7 +295,7 @@ export default function App() {
       });
     } else {
       try {
-        const res = await fetch(`${API_BASE}/api/items/${id}`, { method: 'DELETE' });
+        const res = await fetch(`${API_BASE}/api/items/${id}`, { method: 'DELETE', headers: NGROK_HEADERS });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         setItems(prev => prev.filter(item => item.id !== id));
       } catch (err) {
