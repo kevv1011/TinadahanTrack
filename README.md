@@ -7,10 +7,8 @@
 A mobile-first inventory and stock management dashboard designed specifically for neighborhood sari-sari store owners.
 
 **Live site:** [https://kevv1011.github.io/TinadahanTrack/](https://kevv1011.github.io/TinadahanTrack/)
-**API:** [https://your-api.onrender.com/healthz](https://your-api.onrender.com/healthz) *(not yet deployed)*
+**API:** [https://baggy-tusk-eradicate.ngrok-free.dev/healthz](https://baggy-tusk-eradicate.ngrok-free.dev/healthz)
 **Demo video:** *(link — to be added before finals)*
-
-> **This deployment is running in demo mode. The interface is real; the backend is simulated in your browser so the site works without a server. See Demo mode below. Delete this quote once your API is live.**
 
 ---
 
@@ -22,17 +20,17 @@ A mobile-first inventory and stock management dashboard designed specifically fo
 
 ## Built with
 
-- **Frontend:** React and Vite (Mobile-first, vanilla CSS)
-- **Backend:** Node.js, Express, and a PostgreSQL database hosted on Neon.
+- **Frontend:** React 19, Vite, React Router, Recharts, Lucide icons, and mobile-first vanilla CSS.
+- **Backend:** Node.js, Express, `pg`, Multer uploads, and Neon PostgreSQL.
 
 ## Demo mode
 
-Because the backend is not deployed to the cloud yet, the live site operates in a simulated "Demo Mode" so the UI remains fully functional. This is controlled by the `VITE_USE_MOCK_API` environment variable on the frontend.
+Demo Mode is available for offline UI testing and is controlled by the `VITE_USE_MOCK_API` frontend environment variable. The live deployment uses the Express API through its `ngrok` tunnel.
 
 | `VITE_USE_MOCK_API` | Behaviour |
 |---------------------|-----------|
 | `true` or unset     | The app runs purely in the browser using `localStorage`. No backend is needed. |
-| `false`             | The app makes live network requests to the Express API. |
+| `false`             | The app makes live network requests to the Express API through the configured `ngrok` URL. |
 
 ## Running it yourself
 
@@ -62,12 +60,46 @@ npm install
 npm run dev
 ```
 
+### Run the live stack with ngrok
+
+To expose the local Express API for the deployed client, create `server/.env` with a valid Neon `DATABASE_URL`. In `client/.env`, set:
+
+```env
+VITE_USE_MOCK_API=false
+VITE_API_BASE_URL=https://your-ngrok-subdomain.ngrok-free.dev
+```
+
+Then open three terminals:
+
+**Terminal 1 â€” Express API:**
+```bash
+cd server
+npm install
+npm run dev
+```
+
+**Terminal 2 â€” React client:**
+```bash
+cd client
+npm install
+npm run dev
+```
+
+**Terminal 3 â€” ngrok tunnel (PowerShell):**
+```powershell
+& "C:\path\to\ngrok.exe" http 3001
+```
+
+Copy ngrok's public HTTPS forwarding URL into `VITE_API_BASE_URL`, then restart the Vite client. Free ngrok URLs can change whenever the tunnel restarts; update the environment variable and rebuild/redeploy the GitHub Pages client when this happens.
+
+For the deployed client to access the tunnel, `server/.env` must set `CORS_ORIGINS` to include both `http://localhost:5173` and `https://kevv1011.github.io`. Never commit `server/.env`; anyone running a downloaded copy needs their own Neon connection string.
+
 ## Environment variables
 
 | Variable | Location | Description |
 |----------|----------|-------------|
 | `VITE_USE_MOCK_API` | `client/.env` | Set to `false` to connect to a real backend. |
-| `VITE_API_BASE_URL` | `client/.env` | Your backend URL (e.g., `http://localhost:3001`). |
+| `VITE_API_BASE_URL` | `client/.env` | Express API base URL (e.g., the active `https://…ngrok-free.dev` tunnel or `http://localhost:3001`). |
 | `DATABASE_URL` | `server/.env` | PostgreSQL connection string (e.g., `postgresql://user:pass@host/db`). |
 
 ## Deploying
@@ -92,7 +124,7 @@ TindahanTrack/
 
 ## Architecture
 
-The React frontend handles all user interactions, UI state, and route navigation independently. When a user modifies inventory, the client sends a REST API request (like a `PATCH` or `POST`) to the Node/Express backend running on port 3001. If the API is unreachable or running in Demo Mode, the frontend completely bypasses the network layer and resolves the requests using browser `localStorage` instead.
+The React frontend owns UI state and route navigation. In live mode, it sends REST requests to the local Express API on port 3001 through the configured `ngrok` tunnel; Express connects to Neon PostgreSQL. In Demo Mode, selected through `VITE_USE_MOCK_API`, the frontend instead stores inventory and transactions in browser `localStorage`.
 
 ## What I would do next
 
