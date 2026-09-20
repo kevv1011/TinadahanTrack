@@ -1444,3 +1444,45 @@ ul { list-style: none; }
   height: 100%;
   transition: width 0.3s ease, background-color 0.3s ease;
 }
+
+.quick-cart__totals {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.quick-cart__totals > div {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-text-muted);
+}
+
+.quick-cart__totals strong {
+  color: var(--color-text-main);
+}
+
+.quick-cart__amount--due {
+  color: var(--color-accent) !important;
+}
+
+.quick-cart__cash-label {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.quick-cart__cash-input {
+  width: 100%;
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-main);
+}
+
+.quick-cart__error {
+  margin: 0 0 var(--space-2);
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+}

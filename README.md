@@ -73,7 +73,7 @@ npm run dev
 ## Deploying
 
 - **Client:** The React frontend is deployed automatically to GitHub Pages using the `.github/workflows/deploy.yml` GitHub Actions pipeline.
-- **API:** The Express backend will be deployed to Render, connecting directly to the live Neon PostgreSQL database.
+- **API:** The Express backend runs locally and is exposed to the internet through an `ngrok` secure tunnel, connecting directly to the live Neon PostgreSQL database.
 
 ## Project structure
 
@@ -96,7 +96,7 @@ The React frontend handles all user interactions, UI state, and route navigation
 
 ## What I would do next
 
-- Deploy the Express API to Render to bring the backend fully online.
+- Transition the backend from a local `ngrok` tunnel to a dedicated cloud host once platform availability stabilizes.
 - Expand the POS Quick Cart into a full checkout system with sales receipts.
 - Implement user authentication so multiple store owners can securely manage their own distinct inventories.
 

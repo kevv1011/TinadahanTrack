@@ -1,7 +1,27 @@
 import { X, ShoppingCart } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import Button from '../atoms/Button';
 
 export default function QuickCart({ cart, setCart, onBatchDeduct, isOpen, onClose }) {
+  const [cashTendered, setCashTendered] = useState('');
+  const [checkoutError, setCheckoutError] = useState('');
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const total = useMemo(
+    () => cart.reduce((sum, entry) => sum + Number(entry.item.price) * entry.qty, 0),
+    [cart]
+  );
+  const tendered = Number(cashTendered) || 0;
+  const change = tendered - total;
+  const hasSufficientCash = tendered >= total && total > 0;
+
+  useEffect(() => {
+    if (!isOpen) {
+      setCashTendered('');
+      setCheckoutError('');
+    }
+  }, [isOpen]);
+
   const handleQtyChange = (id, delta) => {
     setCart(prev => 
       prev.map(entry => {
@@ -20,8 +40,21 @@ export default function QuickCart({ cart, setCart, onBatchDeduct, isOpen, onClos
 
   const handleDeduct = async () => {
     if (cart.length === 0) return;
-    await onBatchDeduct(cart);
-    onClose();
+    if (!hasSufficientCash) {
+      setCheckoutError('Enter cash tendered that covers the sale total.');
+      return;
+    }
+
+    setCheckoutError('');
+    setIsCheckingOut(true);
+    const result = await onBatchDeduct(cart);
+    setIsCheckingOut(false);
+
+    if (result?.ok) {
+      onClose();
+    } else {
+      setCheckoutError(result?.error || 'Checkout could not be completed. Please try again.');
+    }
   };
 
   return (
@@ -84,13 +117,32 @@ export default function QuickCart({ cart, setCart, onBatchDeduct, isOpen, onClos
         </div>
 
         <footer className="quick-cart__footer">
+          <div className="quick-cart__totals" aria-live="polite">
+            <div><span>Sale total</span><strong className="mono-num">₱{total.toFixed(2)}</strong></div>
+            <label className="quick-cart__cash-label" htmlFor="cash-tendered">
+              Cash tendered
+              <input
+                id="cash-tendered"
+                className="quick-cart__cash-input mono-num"
+                type="number"
+                min="0"
+                step="0.01"
+                inputMode="decimal"
+                placeholder="0.00"
+                value={cashTendered}
+                onChange={(event) => setCashTendered(event.target.value)}
+              />
+            </label>
+            <div><span>Change</span><strong className={`mono-num${change < 0 ? ' quick-cart__amount--due' : ''}`}>₱{Math.max(change, 0).toFixed(2)}</strong></div>
+          </div>
+          {checkoutError && <p className="quick-cart__error" role="alert">{checkoutError}</p>}
           <Button 
             variant="primary" 
             onClick={handleDeduct} 
-            disabled={cart.length === 0}
+            disabled={cart.length === 0 || isCheckingOut}
             style={{ width: '100%', padding: '12px' }}
           >
-            Deduct Stock ({cart.reduce((sum, entry) => sum + entry.qty, 0)} items)
+            {isCheckingOut ? 'Completing Sale…' : `Complete Sale (${cart.reduce((sum, entry) => sum + entry.qty, 0)} items)`}
           </Button>
         </footer>
       </aside>

@@ -3,6 +3,16 @@
 All changes made by the AI agent are recorded here in reverse-chronological order.
 Each entry includes the date, a summary, and a precise breakdown by action type.
 
+## [Unreleased]
+
+### Added
+
+- **POS Quick Cart checkout:** Added sale totals, cash-tendered input, calculated change, checkout validation, and an in-progress checkout state. Live checkout reconciles server data and restores inventory if the batch deduction request fails; Demo Mode continues to persist inventory and sales transactions in `localStorage`.
+
+### Changed
+
+- **Backend deployment:** Replaced the planned Render deployment with a local Express instance exposed publicly through an `ngrok` secure tunnel. The tunnel connects the API to the existing Neon PostgreSQL database for the final submission.
+
 ---
 
 ## [2026-09-20 · 11:45] — Session 27: README Complete Rewrite & Mockup Screenshots

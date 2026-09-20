@@ -152,6 +152,7 @@ export default function App() {
   const handleBatchDeduct = async (cartEntries) => {
     // Format payload
     const operations = cartEntries.map(entry => ({ id: entry.item.id, qty: entry.qty }));
+    const previousItems = items;
 
     // Optimistic UI update
     setItems(prev => {
@@ -181,6 +182,8 @@ export default function App() {
         window.localStorage.setItem('tindahan_tx', JSON.stringify(newTx));
         return newTx;
       });
+      setCart([]);
+      return { ok: true };
     }
 
     if (!IS_DEMO) {
@@ -208,15 +211,16 @@ export default function App() {
           .then(r => r.json())
           .then(data => setTransactions(data))
           .catch(e => console.error(e));
-          
+        setCart([]);
+        return { ok: true };
       } catch (err) {
         console.error('Batch stock sync failed:', err.message);
-        // Note: Full robust implementation might rollback the optimistic UI update here
+        setItems(previousItems);
+        return { ok: false, error: 'Checkout could not be completed. Your cart has been kept so you can try again.' };
       }
     }
-    
-    // Clear the cart
-    setCart([]);
+
+    return { ok: false, error: 'Checkout could not be completed.' };
   };
 
   // ── Add new product ───────────────────────────────────────────
