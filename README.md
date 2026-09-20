@@ -4,111 +4,103 @@
   <h1>TindahanTrack</h1>
 </div>
 
-## Overview
-TindahanTrack is a mobile-first inventory and stock management dashboard designed specifically for neighborhood sari-sari store owners. It helps owners track retail prices, update stock levels in real-time, and automatically generates a low-stock alert feed so they always know what to reorder. 
+A mobile-first inventory and stock management dashboard designed specifically for neighborhood sari-sari store owners.
 
-## Setup and installation
-This repository uses a monorepo structure, meaning the React frontend and Express backend are split into their own folders and must be configured separately.
+**Live site:** [https://kevv1011.github.io/TinadahanTrack/](https://kevv1011.github.io/TinadahanTrack/)
+**API:** [https://your-api.onrender.com/healthz](https://your-api.onrender.com/healthz) *(not yet deployed)*
+**Demo video:** *(link — to be added before finals)*
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/kevv1011/TinadahanTrack.git
-   cd TinadahanTrack
-   ```
+> **This deployment is running in demo mode. The interface is real; the backend is simulated in your browser so the site works without a server. See Demo mode below. Delete this quote once your API is live.**
 
-2. **Install dependencies:**
-   You must install the NPM packages for both the client and the server.
-   ```bash
-   cd client
-   npm install
-   cd ../server
-   npm install
-   ```
+---
 
-3. **Configure Environment Variables:**
-   You need to create a `.env` file in **both** directories.
+## What it does
 
-   In the `client/` folder, create a `.env` file:
-   ```env
-   VITE_USE_MOCK_API=false
-   VITE_API_BASE_URL=http://localhost:3001
-   ```
+- **Live Inventory Tracking:** Instantly view, add, edit, and delete products to keep your store's inventory perfectly in sync.
+- **Low-Stock Alerts:** Automatically flags items that fall below their minimum threshold so you always know exactly what to restock.
+- **POS Quick Cart:** Batch-deduct items effortlessly through a sliding cart interface to quickly log sales and checkout customers.
 
-   In the `server/` folder, create a `.env` file:
-   ```env
-   DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
-   ```
+## Built with
 
-4. **Seed the Database:**
-   Once your `DATABASE_URL` is configured, run the database reset script from the `server/` folder to build the tables and inject dummy items:
-   ```bash
-   cd server
-   npm run db:reset
-   ```
+- **Frontend:** React and Vite (Mobile-first, vanilla CSS)
+- **Backend:** Node.js, Express, and a PostgreSQL database hosted on Neon.
 
-## How to run it
-To run the full stack locally, you need to open two separate terminal windows.
+## Demo mode
 
-**Terminal 1 (Backend API):**
-```bash
-cd server
-npm run dev
-```
+Because the backend is not deployed to the cloud yet, the live site operates in a simulated "Demo Mode" so the UI remains fully functional. This is controlled by the `VITE_USE_MOCK_API` environment variable on the frontend.
 
-**Terminal 2 (Frontend React):**
+| `VITE_USE_MOCK_API` | Behaviour |
+|---------------------|-----------|
+| `true` or unset     | The app runs purely in the browser using `localStorage`. No backend is needed. |
+| `false`             | The app makes live network requests to the Express API. |
+
+## Running it yourself
+
+### Run just the frontend (Demo Mode)
+You don't need a database to test the UI! Just run the client:
 ```bash
 cd client
+npm install
 npm run dev
 ```
-Open your browser to `http://localhost:5173`. 
 
-## Features and usage
-- **Live PostgreSQL CRUD:** The UI is fully connected to a Neon PostgreSQL database. Adding, editing, or deleting items updates the database in real-time.
-- **Edit & Delete Modals:** Safely update existing product information or remove discontinued stock via interactive React portals.
-- **Demo Mode Fallback:** If the API is unreachable (or if `VITE_USE_MOCK_API=true`), the app gracefully falls back to using your browser's `localStorage` so the UI remains fully interactive for portfolio demonstrations.
-- **Dark Mode:** A persistent, user-friendly theme toggle utilizing clean vector icons from `lucide-react`.
+### Run the full stack
+To test the real API and database connection, open two terminals.
 
-### Main API Endpoints
-- `GET /api/items` - Fetch full inventory
-- `POST /api/items` - Add a new product
-- `PUT /api/items/:id` - Update product details
-- `PATCH /api/items/:id/stock` - Adjust stock levels
-- `DELETE /api/items/:id` - Delete a product
+**Terminal 1 (Backend):**
+```bash
+cd server
+npm install
+npm run db:reset
+npm run dev
+```
+
+**Terminal 2 (Frontend):**
+```bash
+cd client
+npm install
+npm run dev
+```
+
+## Environment variables
+
+| Variable | Location | Description |
+|----------|----------|-------------|
+| `VITE_USE_MOCK_API` | `client/.env` | Set to `false` to connect to a real backend. |
+| `VITE_API_BASE_URL` | `client/.env` | Your backend URL (e.g., `http://localhost:3001`). |
+| `DATABASE_URL` | `server/.env` | PostgreSQL connection string (e.g., `postgresql://user:pass@host/db`). |
+
+## Deploying
+
+- **Client:** The React frontend is deployed automatically to GitHub Pages using the `.github/workflows/deploy.yml` GitHub Actions pipeline.
+- **API:** The Express backend will be deployed to Render, connecting directly to the live Neon PostgreSQL database.
 
 ## Project structure
+
 ```text
 TindahanTrack/
 ├── client/                     # React frontend (Vite)
-│   ├── public/                 # Static assets (logo)
-│   ├── src/                    
-│   │   ├── components/         # Atomic design (atoms, molecules, organisms)
-│   │   ├── pages/              # Route screens (Dashboard, Inventory, AddProduct)
-│   │   ├── App.jsx             # React Router and global state
-│   │   ├── styles.css          # Vanilla CSS design tokens
-│   │   └── main.jsx            # React 18 entry point
+│   ├── public/                 # Static assets and screenshots
+│   ├── src/                    # Atomic components, pages, and App state
 │   └── vite.config.js          
 ├── server/                     # Express backend API
-│   ├── scripts/
-│   │   └── db-reset.js         # PostgreSQL schema & seeding script
+│   ├── scripts/                # db-reset.js (schema setup & seeding)
 │   ├── app.js                  # Express API routes
 │   └── package.json
 └── docs/                       # Course planning documents and weekly reports
-    ├── 01-proposal.md
-    └── 04-weekly-reports.md
 ```
 
-## Screenshots
+## Architecture
 
-### Desktop / Web
-![TindahanTrack Web View 1](./client/public/web%20(1).png)
-![TindahanTrack Web View 2](./client/public/web%20(2).png)
-![TindahanTrack Web View 3](./client/public/web%20(3).png)
+The React frontend handles all user interactions, UI state, and route navigation independently. When a user modifies inventory, the client sends a REST API request (like a `PATCH` or `POST`) to the Node/Express backend running on port 3001. If the API is unreachable or running in Demo Mode, the frontend completely bypasses the network layer and resolves the requests using browser `localStorage` instead.
 
-### Mobile App
-![TindahanTrack Mobile View 1](./client/public/app%20(1).png)
-![TindahanTrack Mobile View 2](./client/public/app%20(2).png)
-![TindahanTrack Mobile View 3](./client/public/app%20(3).png)
+## What I would do next
 
-## Known issues and next steps
-- **Deployment:** The Node/Express backend is currently only running locally and is not yet deployed to a cloud provider like Render. Because of this, the live GitHub Pages site currently relies on the Demo Mode fallback.
-- **Next Steps:** Week 3 will introduce comprehensive POS (Point of Sale) features, including Inventory Analytics charts and a batch-deduction "Quick Cart" tool.
+- Deploy the Express API to Render to bring the backend fully online.
+- Expand the POS Quick Cart into a full checkout system with sales receipts.
+- Implement user authentication so multiple store owners can securely manage their own distinct inventories.
+
+## Author & Licence
+
+Built by Kevin (@kevv1011) — HAU · 6APSI Final Project.
+MIT License.
