@@ -748,7 +748,8 @@ ul { list-style: none; }
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 99;
+  /* Keep the checkout interaction above the fixed mobile navigation. */
+  z-index: 190;
   backdrop-filter: blur(2px);
 }
 .quick-cart {
@@ -760,7 +761,7 @@ ul { list-style: none; }
   max-width: 400px;
   background: var(--color-bg);
   box-shadow: -4px 0 15px rgba(0,0,0,0.1);
-  z-index: 100;
+  z-index: 200;
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
@@ -798,6 +799,7 @@ ul { list-style: none; }
 }
 .quick-cart__content {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: var(--space-3);
 }
@@ -871,6 +873,8 @@ ul { list-style: none; }
 }
 .quick-cart__footer {
   padding: var(--space-3);
+  padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
+  flex-shrink: 0;
   border-top: 1px solid var(--color-border);
   background: var(--color-surface);
 }

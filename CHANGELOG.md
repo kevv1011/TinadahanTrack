@@ -7,6 +7,7 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ### Added
 
+- **Android Capacitor wrapper:** Added Capacitor configuration and the Android native project, built the ngrok-configured Vite bundle, and synced it into the Android wrapper for device testing.
 - **Week 2 documentation:** Added separate Week 2 incremental report and reflection journal documents.
 - **POS Quick Cart checkout:** Added sale totals, cash-tendered input, calculated change, checkout validation, and an in-progress checkout state. Live checkout reconciles server data and restores inventory if the batch deduction request fails; Demo Mode continues to persist inventory and sales transactions in `localStorage`.
 - **Presentation polish:** Added completed-sale receipts, live API error/retry notices, a first-use cart hint, cart-total feedback, and a warmer visual system for the checkout flow.
@@ -21,6 +22,7 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ### Fixed
 
+- **Mobile POS checkout:** Raised the Quick Cart above the fixed bottom navigation and added safe-area-aware footer spacing so the Complete Sale button remains visible and tappable on Android.
 - **ngrok API responses:** Added the `ngrok-skip-browser-warning` header to every client API request so ngrok returns API JSON rather than its browser warning page.
 
 ---
