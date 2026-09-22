@@ -17,10 +17,12 @@ A mobile-first inventory and stock management dashboard designed specifically fo
 - **Live Inventory Tracking:** Instantly view, add, edit, and delete products to keep your store's inventory perfectly in sync.
 - **Low-Stock Alerts:** Automatically flags items that fall below their minimum threshold so you always know exactly what to restock.
 - **Point of Sale (POS) Quick Cart:** Complete sales through a sliding cart with batch stock deductions, a cash-tendered calculator, automatic change generation, and live transaction logging.
+- **Sales Analytics:** Review your store's performance with a dedicated dashboard highlighting seven-day revenue trends, today/week sales metrics, and fast-moving product rankings.
+- **Secure Owner Authentication:** Protects the live backend API with a secure JWT login screen and password hashing to ensure only the store owner can access the data.
 
 ## Built with
 
-- **Frontend:** React 19, Vite, React Router, Recharts, Lucide icons, and mobile-first vanilla CSS.
+- **Frontend:** React 19, Vite, Capacitor (for Android native wrapping), React Router, Recharts, Lucide icons, and mobile-first vanilla CSS.
 - **Backend:** Node.js, Express, `pg`, Multer uploads, and Neon PostgreSQL.
 
 ## Demo mode — recommended evaluation path
@@ -128,6 +130,7 @@ For the deployed client to access the tunnel, `server/.env` must set `CORS_ORIGI
 
 ```text
 TindahanTrack/
+├── android/                    # Capacitor native Android wrapper
 ├── client/                     # React frontend (Vite)
 │   ├── public/                 # Static assets and screenshots
 │   ├── src/                    # Atomic components, pages, and App state
@@ -146,7 +149,8 @@ The React frontend owns UI state and route navigation. Its GitHub Pages deployme
 ## What I would do next
 
 - Transition the backend from a local `ngrok` tunnel to a dedicated cloud host once platform availability stabilizes.
-- Implement user authentication so multiple store owners can securely manage their own distinct inventories.
+- Implement an offline-first hybrid sync system, allowing the store to process sales during internet outages by caching transactions locally and pushing them to the Neon database once reconnected.
+- Integrate native barcode scanning via Capacitor and the smartphone camera to instantly add products to the Quick Cart.
 
 ## Author & Licence
 
