@@ -7,6 +7,9 @@ import multer from 'multer';
 import path from 'path';
 import { mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
+import jwt from 'jsonwebtoken';
+import { scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
+import { promisify } from 'node:util';
 
 const { Pool } = pg;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -15,6 +18,45 @@ mkdirSync(UPLOADS_DIR, { recursive: true });
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const scrypt = promisify(scryptCallback);
+const JWT_SECRET = process.env.JWT_SECRET;
+const AUTH_TOKEN_TTL = process.env.AUTH_TOKEN_TTL || '12h';
+
+function authIsConfigured() {
+  return Boolean(process.env.OWNER_PASSWORD_HASH && JWT_SECRET && JWT_SECRET.length >= 32);
+}
+
+async function verifyOwnerPassword(password) {
+  const parts = (process.env.OWNER_PASSWORD_HASH || '').split('$');
+  if (parts.length !== 3 || parts[0] !== 'scrypt') return false;
+
+  const [, saltText, expectedHashText] = parts;
+  try {
+    const expectedHash = Buffer.from(expectedHashText, 'base64url');
+    const actualHash = await scrypt(password, Buffer.from(saltText, 'base64url'), expectedHash.length);
+    return expectedHash.length === actualHash.length && timingSafeEqual(expectedHash, actualHash);
+  } catch {
+    return false;
+  }
+}
+
+function requireOwnerAuth(req, res, next) {
+  if (!authIsConfigured()) {
+    return res.status(503).json({ error: 'Owner authentication is not configured on the server.' });
+  }
+
+  const [scheme, token] = (req.get('authorization') || '').split(' ');
+  if (scheme !== 'Bearer' || !token) {
+    return res.status(401).json({ error: 'Owner authentication is required.' });
+  }
+
+  try {
+    req.owner = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
+    return next();
+  } catch {
+    return res.status(401).json({ error: 'Your session has expired. Please sign in again.' });
+  }
+}
 
 // ── Database pool ─────────────────────────────────────────────────
 const pool = new Pool({
@@ -49,6 +91,29 @@ app.use('/uploads', express.static(UPLOADS_DIR));
 
 // ── Health check ──────────────────────────────────────────────────
 app.get('/healthz', (_req, _res) => _res.json({ status: 'ok' }));
+
+// Login stays public; every route registered after this middleware requires a valid owner token.
+app.post('/api/auth/login', async (req, res) => {
+  const { password } = req.body || {};
+  if (typeof password !== 'string' || !password) {
+    return res.status(400).json({ error: 'A password is required.' });
+  }
+  if (!authIsConfigured()) {
+    return res.status(503).json({ error: 'Owner authentication is not configured on the server.' });
+  }
+
+  if (!(await verifyOwnerPassword(password))) {
+    return res.status(401).json({ error: 'Incorrect owner password.' });
+  }
+
+  const token = jwt.sign({ role: 'owner' }, JWT_SECRET, {
+    algorithm: 'HS256',
+    expiresIn: AUTH_TOKEN_TTL,
+  });
+  return res.json({ token });
+});
+
+app.use('/api', requireOwnerAuth);
 
 // ── POST /api/upload ─────────────────────────────────────────────
 app.post('/api/upload', upload.single('image'), (req, res) => {

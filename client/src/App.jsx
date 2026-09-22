@@ -6,14 +6,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import DashboardPage from './pages/DashboardPage';
 import InventoryPage from './pages/InventoryPage';
 import AddProductPage from './pages/AddProductPage';
+import LoginPage from './pages/LoginPage';
 import seedItems from './data/seed';
+import { IS_DEMO, apiFetch, clearSessionToken, getSessionToken, saveSessionToken } from './lib/api';
 import './styles.css';
 
 // ── Config ──────────────────────────────────────────────────────
-const IS_DEMO = import.meta.env.VITE_USE_MOCK_API !== 'false';
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 const LS_KEY = 'tindahan_items';
-const NGROK_HEADERS = { 'ngrok-skip-browser-warning': '69420' };
 
 // ── localStorage helpers ────────────────────────────────────────
 function loadFromStorage() {
@@ -36,6 +35,7 @@ export default function App() {
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [apiError, setApiError] = useState('');
+  const [sessionToken, setSessionToken] = useState(() => (IS_DEMO ? null : getSessionToken()));
   
   // ── Quick Cart State ──────────────────────────────────────────
   const [cart, setCart] = useState([]);
@@ -54,13 +54,28 @@ export default function App() {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
+  const handleLogin = (token) => {
+    saveSessionToken(token);
+    setSessionToken(token);
+  };
+
+  useEffect(() => {
+    if (IS_DEMO) return undefined;
+    const requireSignIn = () => {
+      clearSessionToken();
+      setSessionToken(null);
+    };
+    window.addEventListener('tindahan-auth-required', requireSignIn);
+    return () => window.removeEventListener('tindahan-auth-required', requireSignIn);
+  }, []);
+
   const loadLiveData = useCallback(async () => {
     setIsLoading(true);
     setApiError('');
     try {
       const [itemsResponse, transactionsResponse] = await Promise.all([
-        fetch(`${API_BASE}/api/items`, { headers: NGROK_HEADERS }),
-        fetch(`${API_BASE}/api/transactions/recent`, { headers: NGROK_HEADERS }),
+        apiFetch('/api/items'),
+        apiFetch('/api/transactions/recent'),
       ]);
       if (!itemsResponse.ok) throw new Error(`Items request failed (${itemsResponse.status})`);
 
@@ -94,10 +109,12 @@ export default function App() {
       } catch (e) {}
       
       setIsLoading(false);
-    } else {
+    } else if (sessionToken) {
       loadLiveData();
+    } else {
+      setIsLoading(false);
     }
-  }, [loadLiveData]);
+  }, [loadLiveData, sessionToken]);
 
   // ── Stock update ([-] / [+] buttons) ──────────────────────────
   const handleUpdateStock = async (id, delta) => {
@@ -135,9 +152,9 @@ export default function App() {
 
     if (!IS_DEMO) {
       // Best-effort server sync — UI already updated optimistically above
-      fetch(`${API_BASE}/api/items/${id}/stock`, {
+      apiFetch(`/api/items/${id}/stock`, {
         method: 'PATCH',
-        headers: { ...NGROK_HEADERS, 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ delta }),
       })
         .then(res => {
@@ -149,7 +166,7 @@ export default function App() {
           setItems(prev => prev.map(item => item.id === id ? updated : item));
           if (delta < 0) {
             // Refetch transactions to stay in sync
-            fetch(`${API_BASE}/api/transactions/recent`, { headers: NGROK_HEADERS })
+            apiFetch('/api/transactions/recent')
               .then(r => r.json())
               .then(data => setTransactions(data))
               .catch(e => console.error(e));
@@ -207,9 +224,9 @@ export default function App() {
 
     if (!IS_DEMO) {
       try {
-        const res = await fetch(`${API_BASE}/api/items/batch-deduct`, {
+        const res = await apiFetch('/api/items/batch-deduct', {
           method: 'PATCH',
-          headers: { ...NGROK_HEADERS, 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(operations),
         });
         
@@ -226,7 +243,7 @@ export default function App() {
         });
         
         // Refetch transactions to stay in sync
-        fetch(`${API_BASE}/api/transactions/recent`, { headers: NGROK_HEADERS })
+        apiFetch('/api/transactions/recent')
           .then(r => r.json())
           .then(data => setTransactions(data))
           .catch(e => console.error(e));
@@ -260,9 +277,9 @@ export default function App() {
     } else {
       // Live Mode: POST to API and use the DB-generated id
       try {
-        const res = await fetch(`${API_BASE}/api/items`, {
+        const res = await apiFetch('/api/items', {
           method: 'POST',
-          headers: { ...NGROK_HEADERS, 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...fields,
             price: Number(fields.price),
@@ -289,9 +306,9 @@ export default function App() {
       });
     } else {
       try {
-        const res = await fetch(`${API_BASE}/api/items/${id}`, {
+        const res = await apiFetch(`/api/items/${id}`, {
           method: 'PUT',
-          headers: { ...NGROK_HEADERS, 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(fields),
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -313,7 +330,7 @@ export default function App() {
       });
     } else {
       try {
-        const res = await fetch(`${API_BASE}/api/items/${id}`, { method: 'DELETE', headers: NGROK_HEADERS });
+        const res = await apiFetch(`/api/items/${id}`, { method: 'DELETE' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         setItems(prev => prev.filter(item => item.id !== id));
       } catch (err) {
@@ -321,6 +338,10 @@ export default function App() {
       }
     }
   };
+
+  if (!IS_DEMO && !sessionToken) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
 
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>

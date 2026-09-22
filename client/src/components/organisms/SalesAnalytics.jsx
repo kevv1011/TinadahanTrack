@@ -1,10 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import SummaryCard from '../molecules/SummaryCard';
-
-const IS_DEMO = import.meta.env.VITE_USE_MOCK_API !== 'false';
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
-const NGROK_HEADERS = { 'ngrok-skip-browser-warning': '69420' };
+import { IS_DEMO, apiFetch } from '../../lib/api';
 
 function buildDemoAnalytics(transactions) {
   const today = new Date();
@@ -50,7 +47,7 @@ export default function SalesAnalytics({ transactions }) {
       setIsLoading(false);
       return;
     }
-    fetch(`${API_BASE}/api/analytics`, { headers: NGROK_HEADERS })
+    apiFetch('/api/analytics')
       .then((response) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return response.json();

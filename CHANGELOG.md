@@ -7,6 +7,8 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ### Added
 
+- **Live Mode owner authentication:** Added a server-only scrypt password hash, JWT login route, protected API middleware, and a shared web/Android owner sign-in screen. Demo Mode remains password-free for evaluation.
+- **Android app branding:** Replaced the default Android launcher artwork with density-specific TindahanTrack logo assets derived from `client/public/logo.png`.
 - **Android Capacitor wrapper:** Added Capacitor configuration and the Android native project, built the ngrok-configured Vite bundle, and synced it into the Android wrapper for device testing.
 - **Week 2 documentation:** Added separate Week 2 incremental report and reflection journal documents.
 - **POS Quick Cart checkout:** Added sale totals, cash-tendered input, calculated change, checkout validation, and an in-progress checkout state. Live checkout reconciles server data and restores inventory if the batch deduction request fails; Demo Mode continues to persist inventory and sales transactions in `localStorage`.
