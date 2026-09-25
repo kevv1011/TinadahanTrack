@@ -34,6 +34,30 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-25 · 09:10] — Session 28: Pre-Submission Polish & Bug Fixes
+
+**Summary:** Added a visual "Demo" badge for the mock API mode, resolved a Vite file-watcher crash caused by corrupted backup folders, reset the owner password, and finalized the project README.
+
+### ✏️ Files Modified
+
+#### `client/src/components/organisms/Header.jsx`
+- Added an `IS_DEMO` environment variable check.
+- Conditionally renders a `<span className="demo-badge">Demo</span>` badge next to the title when the mock API is active.
+
+#### `client/src/styles.css`
+- Added `.demo-badge` styling with a translucent background and uppercase text to sit flush inside the header.
+
+#### `client/vite.config.js`
+- Added `server.watch.ignored` configuration to bypass `node_modules_broken_20260922`, preventing a Go/chokidar deadlock crash caused by NTFS file corruption.
+
+#### `server/.env`
+- Reset the `OWNER_PASSWORD_HASH` to use `admin123` via the `hash-owner-password.js` script to resolve local login failures.
+
+#### `README.md`
+- Finalized "What I would do next" by scaling back future goals (removed barcode scanning and hybrid sync) to focus on realistic post-submission plans.
+
+---
+
 ## [2026-09-20 · 11:45] — Session 27: README Complete Rewrite & Mockup Screenshots
 
 **Summary:** Completely rewrote the root `README.md` to strictly adhere to the 7 required sections from the course's Week 2 documentation guide. Also embedded the final mockup screenshots for both desktop and mobile views.

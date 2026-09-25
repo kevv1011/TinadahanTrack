@@ -149,8 +149,6 @@ The React frontend owns UI state and route navigation. Its GitHub Pages deployme
 ## What I would do next
 
 - Transition the backend from a local `ngrok` tunnel to a dedicated cloud host once platform availability stabilizes.
-- Implement an offline-first hybrid sync system, allowing the store to process sales during internet outages by caching transactions locally and pushing them to the Neon database once reconnected.
-- Integrate native barcode scanning via Capacitor and the smartphone camera to instantly add products to the Quick Cart.
 
 ## Author & Licence
 

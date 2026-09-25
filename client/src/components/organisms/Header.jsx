@@ -5,6 +5,8 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Sun, Moon } from 'lucide-react';
 
+const IS_DEMO = import.meta.env.VITE_USE_MOCK_API !== 'false';
+
 export default function Header({ title = 'TindahanTrack', showBackButton = false, theme, toggleTheme }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -19,6 +21,7 @@ export default function Header({ title = 'TindahanTrack', showBackButton = false
       <h1 className="header__title">
         <img className="header__logo" src={`${import.meta.env.BASE_URL}logo.png`} alt="TindahanTrack logo" />
         {title}
+        {IS_DEMO && <span className="demo-badge">Demo</span>}
       </h1>
 
       {/* Desktop-only nav — hidden on mobile via CSS */}
