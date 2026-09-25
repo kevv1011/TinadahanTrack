@@ -1,4 +1,5 @@
-export const IS_DEMO = import.meta.env.VITE_USE_MOCK_API !== 'false';
+export const isForcedDemo = window.localStorage.getItem('force_demo_mode') === 'true';
+export const IS_DEMO = isForcedDemo || import.meta.env.VITE_USE_MOCK_API !== 'false';
 export const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 
 const TOKEN_KEY = 'tindahan_owner_token';

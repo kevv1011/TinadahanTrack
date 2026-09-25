@@ -31,10 +31,14 @@ The GitHub Pages **Live site** is deployed in Demo Mode so it remains fully inte
 
 The same dual-mode client can connect to the live Neon database through the local Express API and ngrok tunnel when `VITE_USE_MOCK_API=false`.
 
+- **On-demand Demo Mode:** You can click the **"Test in Demo Mode"** button directly on the login screen to evaluate the app immediately without starting the backend or entering credentials.
+- **Exiting Demo Mode / Switching:** Click the yellow **Demo** badge in the header or the **Sign out** button to return to the live login screen.
+- **Default Owner Password (Live Mode):** `admin123` (configured via `server/.env`).
+
 | `VITE_USE_MOCK_API` | Behaviour |
 |---------------------|-----------|
 | `true` or unset     | The app runs purely in the browser using `localStorage`. This is the GitHub Pages evaluation experience. |
-| `false`             | The app makes live network requests to the Express API through the configured `ngrok` URL. |
+| `false`             | The app makes live network requests to the Express API through the configured `ngrok` URL (or fallback to Demo Mode via the login button). |
 
 ## Running it yourself
 

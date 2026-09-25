@@ -59,6 +59,17 @@ export default function LoginPage({ onLogin }) {
           <button className="btn btn--primary login-card__submit" type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Signing in…' : 'Sign in'}
           </button>
+          <button 
+            type="button" 
+            className="btn login-card__submit" 
+            style={{ marginTop: 'var(--space-2)', background: 'rgba(255, 255, 255, 0.1)', color: 'inherit' }}
+            onClick={() => {
+              window.localStorage.setItem('force_demo_mode', 'true');
+              window.location.reload();
+            }}
+          >
+            Test in Demo Mode
+          </button>
         </form>
       </section>
     </main>

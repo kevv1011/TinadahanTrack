@@ -34,6 +34,30 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-09-25 · 09:45] — Session 29: Demo Mode Bypass, Auth Polish & AI-USAGE Documentation
+
+**Summary:** Added on-demand Demo Mode switching from the login page, enabled header sign out and demo badge dismissal, documented default owner credentials, and completed the full AI-USAGE.md finals submission rubric.
+
+### ✏️ Files Modified
+
+#### `client/src/pages/LoginPage.jsx`
+- Added a "Test in Demo Mode" button allowing reviewers to evaluate the app offline with mock data on demand without modifying `.env`.
+
+#### `client/src/lib/api.js`
+- Added `isForcedDemo` state check reading from `localStorage.getItem('force_demo_mode')` so `IS_DEMO` can be dynamically activated from the UI.
+
+#### `client/src/components/organisms/Header.jsx`
+- Added a "Sign out" button in Live Mode to clear session credentials and return to the login screen.
+- Made the Demo badge clickable to exit forced demo mode and return to live authentication.
+
+#### `AI-USAGE.md`
+- Completed the entire finals AI usage rubric: 6 detailed chronologically dated workflow entries, 3 specific failure cases (Vite directory overwrite, GitHub Pages basename mismatch, file-watcher deadlock), and personal attribution.
+
+#### `README.md`
+- Documented the on-demand Demo Mode login bypass, sign-out controls, and default owner login password (`admin123`).
+
+---
+
 ## [2026-09-25 · 09:10] — Session 28: Pre-Submission Polish & Bug Fixes
 
 **Summary:** Added a visual "Demo" badge for the mock API mode, resolved a Vite file-watcher crash caused by corrupted backup folders, reset the owner password, and finalized the project README.

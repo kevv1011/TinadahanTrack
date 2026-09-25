@@ -4,8 +4,7 @@
 //       Desktop nav links are shown via CSS (hidden below 768px).
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Sun, Moon } from 'lucide-react';
-
-const IS_DEMO = import.meta.env.VITE_USE_MOCK_API !== 'false';
+import { IS_DEMO, isForcedDemo } from '../../lib/api';
 
 export default function Header({ title = 'TindahanTrack', showBackButton = false, theme, toggleTheme }) {
   const navigate = useNavigate();
@@ -21,7 +20,21 @@ export default function Header({ title = 'TindahanTrack', showBackButton = false
       <h1 className="header__title">
         <img className="header__logo" src={`${import.meta.env.BASE_URL}logo.png`} alt="TindahanTrack logo" />
         {title}
-        {IS_DEMO && <span className="demo-badge">Demo</span>}
+        {IS_DEMO && (
+          <span 
+            className="demo-badge"
+            onClick={() => {
+              if (isForcedDemo) {
+                window.localStorage.removeItem('force_demo_mode');
+                window.location.reload();
+              }
+            }}
+            style={isForcedDemo ? { cursor: 'pointer' } : {}}
+            title={isForcedDemo ? "Click to exit Demo Mode" : ""}
+          >
+            Demo
+          </span>
+        )}
       </h1>
 
       {/* Desktop-only nav — hidden on mobile via CSS */}
@@ -31,17 +44,29 @@ export default function Header({ title = 'TindahanTrack', showBackButton = false
         <Link to="/add-item"  className={pathname === '/add-item'  ? 'active' : ''}>+ Add Item</Link>
       </nav>
 
-      {/* Theme toggle */}
-      {toggleTheme && (
-        <button
-          className="header__theme-toggle"
-          onClick={toggleTheme}
-          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', marginLeft: 'auto', display: 'flex', alignItems: 'center' }}
-        >
-          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
-      )}
+      {/* Actions container for Theme and Sign Out */}
+      <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+        {!IS_DEMO && (
+          <button
+            onClick={() => window.dispatchEvent(new Event('tindahan-auth-required'))}
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', fontSize: '14px', opacity: 0.8 }}
+          >
+            Sign out
+          </button>
+        )}
+
+        {/* Theme toggle */}
+        {toggleTheme && (
+          <button
+            className="header__theme-toggle"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', display: 'flex', alignItems: 'center' }}
+          >
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+        )}
+      </div>
     </header>
   );
 }
