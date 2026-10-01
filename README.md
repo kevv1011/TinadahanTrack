@@ -109,12 +109,14 @@ npm run dev
 - **Address to open:** `http://localhost:5173`
 - **Expected screen:** The Owner Sign-in screen appears. Enter the password `admin123` to connect to the live PostgreSQL database, or click **"Test in Demo Mode"** to bypass authentication with mock data.
 
-### Exposing with ngrok (for Mobile APK or External Evaluators)
-In a third terminal, start an ngrok tunnel to port 3001:
-```powershell
-ngrok http 3001
+### Connecting to the Live Cloud Backend (Render Production)
+The Express backend is deployed 24/7 on Render. To connect your frontend client or mobile app directly to the cloud database:
+```env
+# In client/.env
+VITE_USE_MOCK_API=false
+VITE_API_BASE_URL=https://tinadahantrack.onrender.com
 ```
-Copy the generated `https://....ngrok-free.dev` address into `client/.env` as `VITE_API_BASE_URL`, restart Vite, or build the Android APK.
+When running `npm run dev` or using the Android app, requests will automatically route to the live Render PostgreSQL cloud backend without needing any local server running.
 
 ---
 
