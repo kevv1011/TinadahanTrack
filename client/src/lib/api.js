@@ -34,3 +34,34 @@ export async function apiFetch(path, options = {}) {
   }
   return response;
 }
+
+export async function changeOwnerPassword(currentPassword, newPassword) {
+  if (IS_DEMO) {
+    const demoPass = window.localStorage.getItem('tindahan_demo_password') || 'admin123';
+    if (currentPassword !== demoPass) {
+      throw new Error('The current password you entered is incorrect.');
+    }
+    if (!newPassword || newPassword.length < 4) {
+      throw new Error('New password must be at least 4 characters long.');
+    }
+    window.localStorage.setItem('tindahan_demo_password', newPassword);
+    return { success: true, message: 'Password changed successfully in Demo Mode!' };
+  }
+
+  const response = await apiFetch('/api/auth/change-password', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to update password.');
+  }
+
+  if (data.token) {
+    saveSessionToken(data.token);
+  }
+  return data;
+}
+

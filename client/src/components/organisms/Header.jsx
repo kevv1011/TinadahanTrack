@@ -2,13 +2,16 @@
 // Props: title (string), showBackButton (boolean)
 // NOTE: No burger menu — mobile routing is handled by BottomNav.
 //       Desktop nav links are shown via CSS (hidden below 768px).
+import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Sun, Moon } from 'lucide-react';
+import { ArrowLeft, Sun, Moon, Key, LogOut } from 'lucide-react';
 import { IS_DEMO, isForcedDemo } from '../../lib/api';
+import ChangePasswordModal from '../molecules/ChangePasswordModal';
 
 export default function Header({ title = 'TindahanTrack', showBackButton = false, theme, toggleTheme }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   return (
     <header className="header">
@@ -44,14 +47,30 @@ export default function Header({ title = 'TindahanTrack', showBackButton = false
         <Link to="/add-item"  className={pathname === '/add-item'  ? 'active' : ''}>+ Add Item</Link>
       </nav>
 
-      {/* Actions container for Theme and Sign Out */}
-      <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+      {/* Actions container for Password, Sign Out, and Theme */}
+      <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+        {/* User-friendly Change Password button */}
+        <button
+          type="button"
+          className="header__pwd-btn"
+          onClick={() => setIsPasswordModalOpen(true)}
+          title="Change Owner Password"
+          aria-label="Change Owner Password"
+        >
+          <Key size={14} />
+          <span className="header__pwd-text">Password</span>
+        </button>
+
         {!IS_DEMO && (
           <button
+            type="button"
+            className="header__signout-btn"
             onClick={() => window.dispatchEvent(new Event('tindahan-auth-required'))}
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', fontSize: '14px', opacity: 0.8 }}
+            title="Sign out of TindahanTrack"
+            aria-label="Sign out"
           >
-            Sign out
+            <LogOut size={15} />
+            <span className="header__signout-text">Sign out</span>
           </button>
         )}
 
@@ -61,12 +80,18 @@ export default function Header({ title = 'TindahanTrack', showBackButton = false
             className="header__theme-toggle"
             onClick={toggleTheme}
             aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', display: 'flex', alignItems: 'center' }}
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#fff', display: 'flex', alignItems: 'center', padding: '4px', opacity: 0.9 }}
           >
-            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
           </button>
         )}
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+      />
     </header>
   );
 }

@@ -1699,3 +1699,198 @@ ul { list-style: none; }
 .login-card__field input { width: 100%; min-width: 0; padding: var(--space-2) 0; border: 0; outline: 0; background: transparent; color: var(--color-text-main); }
 .login-card__error { margin: 0; color: var(--color-accent); font-size: var(--font-size-sm); }
 .login-card__submit { width: 100%; margin-top: var(--space-1); }
+
+/* ══════════════════════════════════════════════════════════════
+   HEADER BUTTONS & USER-FRIENDLY PASSWORD MODAL
+   ══════════════════════════════════════════════════════════════ */
+.header__pwd-btn {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-full);
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.header__pwd-btn:hover {
+  background: rgba(255, 255, 255, 0.32);
+  transform: translateY(-1px);
+}
+
+.header__signout-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  transition: opacity var(--transition-fast), background var(--transition-fast);
+}
+
+.header__signout-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 540px) {
+  .header__pwd-text,
+  .header__signout-text {
+    display: none;
+  }
+  .header__pwd-btn {
+    padding: 6px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+.change-password-icon-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: rgba(181, 34, 116, 0.12);
+  color: var(--color-primary);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.change-password-hint-box {
+  margin: 0;
+  padding: 10px 14px;
+  background: var(--color-bg);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.change-password-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+.change-password-alert--error {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input {
+  padding-right: 42px !important;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.password-toggle-btn:hover {
+  color: var(--color-text-main);
+}
+
+.password-field-subtext {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.password-match-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  margin-top: 5px;
+}
+
+.password-match-indicator--match {
+  color: #16a34a;
+}
+
+.password-match-indicator--mismatch {
+  color: #ea580c;
+}
+
+.change-password-success {
+  padding: var(--space-4) var(--space-3);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  animation: fadeIn 200ms ease;
+}
+
+.change-password-success__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+  display: grid;
+  place-items: center;
+  margin-bottom: var(--space-1);
+}
+
+.change-password-success__title {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--color-text-main);
+}
+
+.change-password-success__text {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  max-width: 320px;
+  line-height: 1.45;
+}
+
+.change-password-success__demo-note {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.change-password-success__btn {
+  margin-top: var(--space-2);
+  width: 100%;
+  max-width: 220px;
+}
+

@@ -25,6 +25,12 @@ CREATE TABLE transactions (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS store_settings (
+  key         VARCHAR(50) PRIMARY KEY,
+  value       TEXT NOT NULL,
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- ── Seed data ────────────────────────────────────────────────────
 INSERT INTO items (name, category, price, current_stock, min_threshold) VALUES
   ('Piattos Cheese',         'Snacks',        22.00, 18,  5),

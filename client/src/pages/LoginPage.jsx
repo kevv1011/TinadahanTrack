@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import { LockKeyhole, Store } from 'lucide-react';
+import { LockKeyhole, Store, Eye, EyeOff } from 'lucide-react';
 import { API_BASE, loginHeaders } from '../lib/api';
 
 export default function LoginPage({ onLogin }) {
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!password) {
-      setError('Enter the owner password to continue.');
+      setError('Please enter the owner password to continue.');
       return;
     }
 
@@ -28,7 +29,10 @@ export default function LoginPage({ onLogin }) {
       }
       onLogin(data.token);
     } catch (err) {
-      setError(err.message || 'Unable to sign in.');
+      const msg = err.message === 'Incorrect owner password.'
+        ? 'Incorrect password. If you have not changed it yet, the default is admin123.'
+        : (err.message || 'Unable to sign in.');
+      setError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -47,14 +51,27 @@ export default function LoginPage({ onLogin }) {
             <LockKeyhole size={18} aria-hidden="true" />
             <input
               id="owner-password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               autoComplete="current-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               disabled={isSubmitting}
+              placeholder="e.g. admin123"
               autoFocus
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(prev => !prev)}
+              style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px', color: 'inherit', display: 'flex', alignItems: 'center' }}
+              title={showPassword ? 'Hide password' : 'Show password'}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
+          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+            💡 Default password: <strong>admin123</strong>
+          </span>
           {error && <p className="login-card__error" role="alert">{error}</p>}
           <button className="btn btn--primary login-card__submit" type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Signing in…' : 'Sign in'}

@@ -8,7 +8,7 @@ import path from 'path';
 import { mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import jwt from 'jsonwebtoken';
-import { scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
+import { randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 
 const { Pool } = pg;
@@ -22,12 +22,42 @@ const scrypt = promisify(scryptCallback);
 const JWT_SECRET = process.env.JWT_SECRET;
 const AUTH_TOKEN_TTL = process.env.AUTH_TOKEN_TTL || '12h';
 
+// ── Database pool ─────────────────────────────────────────────────
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
+
+// Ensure store_settings table exists
+pool.query(`
+  CREATE TABLE IF NOT EXISTS store_settings (
+    key VARCHAR(50) PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+`).catch(err => console.error('Notice: store_settings table init:', err.message));
+
 function authIsConfigured() {
-  return Boolean(process.env.OWNER_PASSWORD_HASH && JWT_SECRET && JWT_SECRET.length >= 32);
+  return Boolean((process.env.OWNER_PASSWORD_HASH || true) && JWT_SECRET && JWT_SECRET.length >= 32);
+}
+
+async function getStoredOwnerPasswordHash() {
+  try {
+    const { rows } = await pool.query(
+      "SELECT value FROM store_settings WHERE key = 'owner_password_hash' LIMIT 1;"
+    );
+    if (rows.length && rows[0].value) {
+      return rows[0].value;
+    }
+  } catch (_err) {
+    // If database or table is unavailable, fall back to environment variable
+  }
+  return process.env.OWNER_PASSWORD_HASH || '';
 }
 
 async function verifyOwnerPassword(password) {
-  const parts = (process.env.OWNER_PASSWORD_HASH || '').split('$');
+  const hashString = await getStoredOwnerPasswordHash();
+  const parts = hashString.split('$');
   if (parts.length !== 3 || parts[0] !== 'scrypt') return false;
 
   const [, saltText, expectedHashText] = parts;
@@ -38,6 +68,12 @@ async function verifyOwnerPassword(password) {
   } catch {
     return false;
   }
+}
+
+async function hashPassword(password) {
+  const salt = randomBytes(16);
+  const hash = await scrypt(password, salt, 64);
+  return `scrypt$${salt.toString('base64url')}$${hash.toString('base64url')}`;
 }
 
 function requireOwnerAuth(req, res, next) {
@@ -57,12 +93,6 @@ function requireOwnerAuth(req, res, next) {
     return res.status(401).json({ error: 'Your session has expired. Please sign in again.' });
   }
 }
-
-// ── Database pool ─────────────────────────────────────────────────
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-});
 
 // ── File upload (multer) ──────────────────────────────────────────
 const storage = multer.diskStorage({
@@ -142,6 +172,49 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 app.use('/api', requireOwnerAuth);
+
+// ── PUT /api/auth/change-password ────────────────────────────────
+app.put('/api/auth/change-password', async (req, res) => {
+  const { currentPassword, newPassword } = req.body || {};
+
+  if (!currentPassword || typeof currentPassword !== 'string') {
+    return res.status(400).json({ error: 'Please enter your current password.' });
+  }
+
+  if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 4) {
+    return res.status(400).json({ error: 'New password must be at least 4 characters long.' });
+  }
+
+  const isCurrentValid = await verifyOwnerPassword(currentPassword);
+  if (!isCurrentValid) {
+    return res.status(400).json({ error: 'The current password you entered is incorrect. Please check and try again.' });
+  }
+
+  try {
+    const newHash = await hashPassword(newPassword);
+    await pool.query(`
+      INSERT INTO store_settings (key, value, updated_at)
+      VALUES ('owner_password_hash', $1, NOW())
+      ON CONFLICT (key) DO UPDATE
+      SET value = EXCLUDED.value, updated_at = NOW();
+    `, [newHash]);
+
+    // Issue a refreshed token
+    const token = jwt.sign({ role: 'owner' }, JWT_SECRET, {
+      algorithm: 'HS256',
+      expiresIn: AUTH_TOKEN_TTL,
+    });
+
+    return res.json({
+      success: true,
+      message: 'Password changed successfully! Keep your new password safe.',
+      token,
+    });
+  } catch (err) {
+    console.error('Failed to change owner password:', err);
+    return res.status(500).json({ error: 'Unable to update password right now. Please try again.' });
+  }
+});
 
 // ── POST /api/upload ─────────────────────────────────────────────
 app.post('/api/upload', upload.single('image'), (req, res) => {
