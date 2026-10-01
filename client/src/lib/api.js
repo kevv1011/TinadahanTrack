@@ -3,7 +3,6 @@ export const IS_DEMO = isForcedDemo || import.meta.env.VITE_USE_MOCK_API !== 'fa
 export const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://tinadahantrack.onrender.com';
 
 const TOKEN_KEY = 'tindahan_owner_token';
-const NGROK_HEADERS = { 'ngrok-skip-browser-warning': '69420' };
 
 export function getSessionToken() {
   return window.sessionStorage.getItem(TOKEN_KEY);
@@ -18,12 +17,11 @@ export function clearSessionToken() {
 }
 
 export function loginHeaders() {
-  return { ...NGROK_HEADERS, 'Content-Type': 'application/json' };
+  return { 'Content-Type': 'application/json' };
 }
 
 export async function apiFetch(path, options = {}) {
   const headers = new Headers(options.headers || {});
-  headers.set('ngrok-skip-browser-warning', '69420');
 
   const token = getSessionToken();
   if (token) headers.set('Authorization', `Bearer ${token}`);

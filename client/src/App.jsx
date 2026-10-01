@@ -85,7 +85,7 @@ export default function App() {
       setTransactions(Array.isArray(txData) ? txData : []);
     } catch (err) {
       console.error('Failed to load data from API:', err.message);
-      setApiError('Unable to reach the live API. Check the ngrok tunnel, then try again.');
+      setApiError('Unable to reach the live API. Check your internet connection, then try again.');
     } finally {
       setIsLoading(false);
     }
