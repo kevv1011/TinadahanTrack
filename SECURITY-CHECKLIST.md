@@ -49,4 +49,4 @@ This checklist is completed prior to project submission in accordance with the W
 
 ## 4. Tradeoff & Reflection Note
 
-The primary security tradeoff accepted for this project is using a local Express server exposed via an `ngrok` secure tunnel instead of a permanent cloud virtual machine. To mitigate the risk of exposed public endpoints, owner endpoints are gated behind JWT authentication with scrypt-hashed credentials, and the production GitHub Pages deployment defaults to a standalone, zero-network Demo Mode that persists safely in browser `localStorage`.
+The backend was originally exposed via an ngrok secure tunnel during development, but has now been transitioned to a permanent cloud Web Service on Render (`https://tinadahantrack.onrender.com`) backed by Neon PostgreSQL with SSL enforced (`sslmode=require`). To ensure complete security, owner endpoints are gated behind JWT authentication with scrypt-hashed credentials (`timingSafeEqual`), and the production GitHub Pages deployment defaults to a standalone, zero-network Demo Mode that persists safely in browser `localStorage`.

@@ -6,7 +6,7 @@
 </div>
 
 **Live Site (Demo Mode):** [https://kevv1011.github.io/TinadahanTrack/](https://kevv1011.github.io/TinadahanTrack/)  
-**Live API Endpoint (Temporary):** [https://baggy-tusk-eradicate.ngrok-free.dev/healthz](https://baggy-tusk-eradicate.ngrok-free.dev/healthz) *(available while local Express & ngrok are active)*  
+**Live API Endpoint (Render Production):** [https://tinadahantrack.onrender.com/healthz](https://tinadahantrack.onrender.com/healthz)  
 **Demo Video:** *(link — to be added before finals)*  
 **Security & Privacy:** [SECURITY-CHECKLIST.md](SECURITY-CHECKLIST.md)  
 **AI Usage Log:** [AI-USAGE.md](AI-USAGE.md)  
@@ -197,13 +197,14 @@ TindahanTrack/
 ## 7. Known Issues and Next Steps
 
 ### Known Issues & Tradeoffs
-1. **ngrok Free-Tier URLs:** In Live Mode, the local Express server is exposed via an ngrok free-tier tunnel. Free tunnel URLs change on every restart, requiring manual updates to `VITE_API_BASE_URL` in `client/.env`. The standalone Demo Mode eliminates this dependency for evaluators.
-2. **Image Upload Persistence in Ephemeral Environments:** Uploaded product images are stored locally in `server/uploads/`. If moved to serverless cloud environments without persistent volume mounts, cloud object storage (e.g., Cloudinary or AWS S3) will be required.
+1. **Permanent Cloud Backend:** The Express REST API and PostgreSQL database are hosted on Render (`https://tinadahantrack.onrender.com`). Free-tier Render web services spin down after 15 minutes of inactivity, which may cause an initial 30–50 second cold-start delay on first request.
+2. **Offline Evaluation Fallback:** The standalone Demo Mode on GitHub Pages eliminates cloud cold-start dependencies for evaluators by persisting all inventory changes and sales transactions in browser `localStorage`.
+3. **Image Upload Persistence in Ephemeral Environments:** Uploaded product images are stored locally in `server/uploads/`. For permanent multi-instance scaling, cloud object storage (e.g., Cloudinary or AWS S3) will be integrated in future phases.
 
 ### Next Steps (Post-Submission)
-- Deploy the Express API and PostgreSQL database to permanent cloud hosting (e.g., Render, Railway, or Fly.io) once platform stability is confirmed.
 - Implement barcode scanning via device camera using Capacitor plugins for instant item lookup.
 - Add receipt printing / SMS receipt sharing for customer convenience.
+- Add low-stock push notifications via Firebase Cloud Messaging (FCM).
 
 ---
 

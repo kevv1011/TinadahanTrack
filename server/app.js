@@ -90,7 +90,16 @@ app.use(express.json());
 // ── Serve uploaded images ─────────────────────────────────────────
 app.use('/uploads', express.static(UPLOADS_DIR));
 
-// ── Health check ──────────────────────────────────────────────────
+// ── Root info & Health check ──────────────────────────────────────
+app.get('/', (_req, res) => {
+  res.json({
+    project: 'TindahanTrack REST API',
+    status: 'online',
+    version: '1.0.0',
+    health: '/healthz',
+    frontend: 'https://kevv1011.github.io/TinadahanTrack/'
+  });
+});
 app.get('/healthz', (_req, _res) => _res.json({ status: 'ok' }));
 
 // Login stays public; every route registered after this middleware requires a valid owner token.

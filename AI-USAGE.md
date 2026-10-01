@@ -45,6 +45,12 @@ graded as the finals badge, and it is worth 100 points.
 - **What I kept, what I changed, and why:** Kept the implementation. I had to manually use the agent to reset the `OWNER_PASSWORD_HASH` in `.env` to `admin123` when I was unable to log in during testing.
 - **Commit:** https://github.com/kevv1011/TinadahanTrack/commit/d6a11ff
 
+### 2026-10-01 - Render Cloud API Migration & ngrok Crash Recovery
+- **Tool:** Google Antigravity Agent
+- **What I asked for:** Fix a fatal Go runtime access violation crash (`0xc0000005` in `FillFromRDNSequence`) preventing ngrok from launching, and help deploy the Express + PostgreSQL backend to Render for permanent cloud hosting.
+- **What it gave back:** Diagnosed binary corruption, downloaded and restored the official clean ngrok v3 release, configured Render deployment parameters (`server` root directory, `npm start`), added production CORS support for GitHub Pages, and hooked the frontend to the live Render endpoint (`https://tinadahantrack.onrender.com`).
+- **What I kept, what I changed, and why:** Kept the Render cloud backend as the primary live API for the final submission because it eliminates ngrok session timeouts and provides 24/7 reliability for evaluators.
+
 ## 2. Where the AI got it wrong
 
 ### Case 1 - Vite overwriting the src directory
@@ -63,6 +69,11 @@ graded as the finals badge, and it is worth 100 points.
 - **What was wrong with it:** Vite's file watcher attempted to scan the corrupted backup folder, which caused a deadlock in Go/chokidar and completely crashed the `npm run dev` server.
 - **What I did instead:** Because the corrupted file couldn't be deleted by standard Windows commands, I directed the agent to modify `vite.config.js` with `server.watch.ignored` to bypass the corrupted folder entirely.
 - **Commit:** https://github.com/kevv1011/TinadahanTrack/commit/39f9c6e
+
+### Case 4 - Vite Watcher Crashing on Android Build Artifacts
+- **What it gave me:** Vite was configured to watch the whole `client/` directory, which contained the Capacitor Android native project (`client/android/`).
+- **What was wrong with it:** When Gradle compiled the Android app, it generated thousands of deeply nested build directories (`client/android/app/build/...`), causing Vite's file watcher to fail with an `UNKNOWN lstat` error and immediately crash the development server.
+- **What I did instead:** Configured `client/vite.config.js` to explicitly ignore `**/android/**`, `**/build/**`, and `**/.gradle/**` in `server.watch.ignored`, completely insulating the frontend dev server from native mobile build trees.
 
 ## 3. Who wrote what
 

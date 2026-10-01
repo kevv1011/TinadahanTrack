@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+*.apk
+build_corrupt/
 
 # Environment variables — never commit credentials
 .env

@@ -34,6 +34,35 @@ Each entry includes the date, a summary, and a precise breakdown by action type.
 
 ---
 
+## [2026-10-01 · 17:30] — Session 30: Render Cloud Migration, ngrok Recovery, Vite Watcher Hardening & Repo Cleanup
+
+**Summary:** Migrated Express and PostgreSQL backend to a permanent, 24/7 Render cloud Web Service, recovered ngrok from a Go x509 access violation crash, hardened Vite file-watcher against deep Android build trees, and cleaned up temporary development artifacts.
+
+### ✏️ Files Modified
+
+#### `server/app.js`
+- Added default CORS allowances for `https://kevv1011.github.io` and local origins to ensure cloud API requests from GitHub Pages evaluate smoothly out of the box.
+
+#### `client/.env` & `client/src/lib/api.js`
+- Updated `VITE_API_BASE_URL` to point to production Render cloud backend (`https://tinadahantrack.onrender.com`).
+- Updated `API_BASE` default fallback to the live Render endpoint.
+
+#### `client/vite.config.js`
+- Added `**/android/**`, `**/build/**`, and `**/.gradle/**` to `server.watch.ignored` to prevent Vite's file watcher from crashing with `lstat UNKNOWN` errors on deeply nested Android build artifacts.
+
+#### `README.md`
+- Updated live endpoint link to Render production (`https://tinadahantrack.onrender.com/healthz`).
+- Updated Section 7 (Known Issues and Next Steps) to reflect cloud-hosted production architecture and cold-start characteristics.
+
+#### `AI-USAGE.md`
+- Documented session log for Render deployment, ngrok certificate crash resolution, and Vite Android build watcher troubleshooting.
+
+### 🧹 Repository Cleanup
+- Removed abandoned `client/node_modules_broken_20260922/` directory.
+- Purged empty `tmp/` scratch directory.
+
+---
+
 ## [2026-09-25 · 09:45] — Session 29: Demo Mode Bypass, Auth Polish & AI-USAGE Documentation
 
 **Summary:** Added on-demand Demo Mode switching from the login page, enabled header sign out and demo badge dismissal, documented default owner credentials, and completed the full AI-USAGE.md finals submission rubric.

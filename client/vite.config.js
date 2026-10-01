@@ -6,7 +6,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     watch: {
-      ignored: ['**/node_modules_broken_20260922/**']
+      ignored: [
+        '**/android/**',
+        '**/build/**',
+        '**/.gradle/**',
+        '**/node_modules_broken_20260922/**'
+      ]
     }
   }
 })

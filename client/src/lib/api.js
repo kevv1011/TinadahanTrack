@@ -1,6 +1,6 @@
 export const isForcedDemo = window.localStorage.getItem('force_demo_mode') === 'true';
 export const IS_DEMO = isForcedDemo || import.meta.env.VITE_USE_MOCK_API !== 'false';
-export const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+export const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://tinadahantrack.onrender.com';
 
 const TOKEN_KEY = 'tindahan_owner_token';
 const NGROK_HEADERS = { 'ngrok-skip-browser-warning': '69420' };
