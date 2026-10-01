@@ -82,9 +82,27 @@ const upload = multer({
 });
 
 // ── Middleware ────────────────────────────────────────────────────
-const defaultOrigins = 'http://localhost:5173,https://kevv1011.github.io,http://localhost:3000';
-const allowedOrigins = (process.env.CORS_ORIGINS || defaultOrigins).split(',').map(s => s.trim());
-app.use(cors({ origin: allowedOrigins }));
+const mobileAndLocalOrigins = [
+  'http://localhost',
+  'https://localhost',
+  'capacitor://localhost',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://kevv1011.github.io'
+];
+const customOrigins = (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+const allowedOrigins = Array.from(new Set([...mobileAndLocalOrigins, ...customOrigins]));
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Always allow origin so mobile apps (Capacitor/Cordova/Android WebView) and web apps never get blocked
+    callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'ngrok-skip-browser-warning']
+}));
+app.options('*', cors());
 app.use(express.json());
 
 // ── Serve uploaded images ─────────────────────────────────────────
