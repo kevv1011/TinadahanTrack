@@ -2,159 +2,216 @@
   <img src="client/public/logo.png" alt="TindahanTrack Logo" width="120" style="border-radius: 20px;" />
   <br/>
   <h1>TindahanTrack</h1>
+  <p>A mobile-first inventory, stock management, and point-of-sale system designed specifically for neighborhood sari-sari store owners.</p>
 </div>
 
-A mobile-first inventory and stock management dashboard designed specifically for neighborhood sari-sari store owners.
-
-**Live site:** [https://kevv1011.github.io/TinadahanTrack/](https://kevv1011.github.io/TinadahanTrack/)
-**Live API (temporary):** [https://baggy-tusk-eradicate.ngrok-free.dev/healthz](https://baggy-tusk-eradicate.ngrok-free.dev/healthz) *(available while the local Express server and ngrok tunnel are running)*
-**Demo video:** *(link — to be added before finals)*
+**Live Site (Demo Mode):** [https://kevv1011.github.io/TinadahanTrack/](https://kevv1011.github.io/TinadahanTrack/)  
+**Live API Endpoint (Temporary):** [https://baggy-tusk-eradicate.ngrok-free.dev/healthz](https://baggy-tusk-eradicate.ngrok-free.dev/healthz) *(available while local Express & ngrok are active)*  
+**Demo Video:** *(link — to be added before finals)*  
+**Security & Privacy:** [SECURITY-CHECKLIST.md](SECURITY-CHECKLIST.md)  
+**AI Usage Log:** [AI-USAGE.md](AI-USAGE.md)  
 
 ---
 
-## What it does
+## 1. Overview
 
-- **Live Inventory Tracking:** Instantly view, add, edit, and delete products to keep your store's inventory perfectly in sync.
-- **Low-Stock Alerts:** Automatically flags items that fall below their minimum threshold so you always know exactly what to restock.
-- **Point of Sale (POS) Quick Cart:** Complete sales through a sliding cart with batch stock deductions, a cash-tendered calculator, automatic change generation, and live transaction logging.
-- **Sales Analytics:** Review your store's performance with a dedicated dashboard highlighting seven-day revenue trends, today/week sales metrics, and fast-moving product rankings.
-- **Secure Owner Authentication:** Protects the live backend API with a secure JWT login screen and password hashing to ensure only the store owner can access the data.
+TindahanTrack is a mobile-first inventory and stock management web application built for neighborhood sari-sari store owners in the Philippines. Small family-run retail stores typically rely on messy pen-and-paper ledgers that make it difficult to track depleted inventory, calculate profits, or prepare supplier restocking lists.
 
-## Built with
+TindahanTrack solves this problem by giving store owners a digital dashboard to track stock in real time, receive automatic low-stock threshold alerts, run sales through a Quick Cart point-of-sale checkout with cash tendering and change calculation, and review sales analytics — all accessible on mobile or desktop browsers, or as an Android app.
 
-- **Frontend:** React 19, Vite, Capacitor (for Android native wrapping), React Router, Recharts, Lucide icons, and mobile-first vanilla CSS.
-- **Backend:** Node.js, Express, `pg`, Multer uploads, and Neon PostgreSQL.
+---
 
-## Demo mode — recommended evaluation path
+## 2. Setup and Installation
 
-The GitHub Pages **Live site** is deployed in Demo Mode so it remains fully interactive even when the temporary ngrok tunnel is offline. It supports inventory changes, POS checkout, receipts, transaction history, and analytics using browser `localStorage`; no installation, database, or server is required for evaluation.
+Follow these steps to run TindahanTrack locally from scratch:
 
-The same dual-mode client can connect to the live Neon database through the local Express API and ngrok tunnel when `VITE_USE_MOCK_API=false`.
+### Prerequisites & Versions
+- **Node.js:** v20.18.0 or higher
+- **npm:** v10.8.0 or higher
+- **Git:** for cloning the repository
+- **Database:** A cloud PostgreSQL database instance (such as [Neon.tech](https://neon.tech)) or a local PostgreSQL server
 
-- **On-demand Demo Mode:** You can click the **"Test in Demo Mode"** button directly on the login screen to evaluate the app immediately without starting the backend or entering credentials.
-- **Exiting Demo Mode / Switching:** Click the yellow **Demo** badge in the header or the **Sign out** button to return to the live login screen.
-- **Default Owner Password (Live Mode):** `admin123` (configured via `server/.env`).
-
-| `VITE_USE_MOCK_API` | Behaviour |
-|---------------------|-----------|
-| `true` or unset     | The app runs purely in the browser using `localStorage`. This is the GitHub Pages evaluation experience. |
-| `false`             | The app makes live network requests to the Express API through the configured `ngrok` URL (or fallback to Demo Mode via the login button). |
-
-## Running it yourself
-
-### Run just the frontend (Demo Mode)
-You don't need a database, Express server, or ngrok to test the full UI flow:
+### Step 1: Clone the repository
 ```bash
-cd client
-npm install
-npm run dev
+git clone https://github.com/kevv1011/TinadahanTrack.git
+cd TinadahanTrack
 ```
 
-### Run the full stack
-To test the real API and database connection, open two terminals.
-
-**Terminal 1 (Backend):**
+### Step 2: Install dependencies
+Install dependencies for both the backend server and frontend client:
 ```bash
+# Install backend dependencies
 cd server
 npm install
-npm run db:reset
-npm run dev
-```
 
-**Terminal 2 (Frontend):**
-```bash
-cd client
+# Install frontend dependencies
+cd ../client
 npm install
-npm run dev
 ```
 
-### Run the live Neon stack with ngrok
+### Step 3: Environment Configuration
+Create a `.env` file in the `server/` directory and another in the `client/` directory based on the following tables. **Never commit real credentials to Git.**
 
-To expose the local Express API for the deployed client, create `server/.env` with a valid Neon `DATABASE_URL`. In `client/.env`, set:
+#### `server/.env` (Backend Configuration)
+```env
+PORT=3001
+DATABASE_URL=postgresql://neondb_owner:YOUR_PASSWORD@ep-example-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+CORS_ORIGINS=http://localhost:5173,https://kevv1011.github.io
+OWNER_PASSWORD_HASH=scrypt$YOUR_BASE64_SALT$YOUR_BASE64_HASH
+JWT_SECRET=your-32-character-or-longer-random-secret-key-here
+AUTH_TOKEN_TTL=12h
+```
+*(Default owner password in development is `admin123`).*
 
+#### `client/.env` (Frontend Configuration)
 ```env
 VITE_USE_MOCK_API=false
-VITE_API_BASE_URL=https://your-ngrok-subdomain.ngrok-free.dev
+VITE_API_BASE_URL=http://localhost:3001
+```
+*Note: If you are testing purely offline without a database, set `VITE_USE_MOCK_API=true` or click the **"Test in Demo Mode"** button on the login screen.*
+
+### Step 4: Set up and Seed the Database
+Initialize the database tables (`items`, `transactions`, `transaction_items`) and seed 25 realistic sari-sari store products:
+```bash
+cd server
+npm run db:reset
 ```
 
-Then open three **separate PowerShell terminals** and leave all three running while you use Live Mode. These commands assume the repository was saved at `D:\TindahanTrack`.
+---
 
-**Terminal 1 - Express API (required for live data):**
+## 3. How to Run It
 
-```powershell
-cd D:\TindahanTrack\server
-npm install
+### Running in Standalone Demo Mode (Frontend Only)
+You do not need an active database or Express server to test the full UI flow:
+```bash
+cd client
 npm run dev
 ```
+- **Address to open:** Open `http://localhost:5173` in your browser.
+- **Expected screen:** The TindahanTrack dashboard loads immediately with mock data saved in browser `localStorage`.
 
-**Terminal 2 - Desktop/laptop browser app:**
+### Running Full-Stack (Backend + Frontend)
+Open two separate terminals:
 
-```powershell
-cd D:\TindahanTrack\client
-npm install
+**Terminal 1 (Backend API):**
+```bash
+cd server
 npm run dev
 ```
+- **Expected output:** `TindahanTrack API running on http://localhost:3001`
+- **Verification:** Visiting `http://localhost:3001/healthz` returns `{"status":"ok"}`.
 
-Open the local Vite address that appears in this terminal (normally `http://localhost:5173`) in a desktop or laptop browser. This terminal is not needed when testing the already-installed Android APK.
-
-**Terminal 3 - ngrok tunnel (required for the Android APK or anyone outside your local network):**
-
-Open a fresh PowerShell window. You may be in any folder. The part inside the quotation marks must be the actual location of `ngrok.exe` on that computer. For example, if it is stored in `D:\NGROK`, copy and paste:
-
-```powershell
-& "D:\NGROK\ngrok.exe" http 3001
+**Terminal 2 (Frontend Client):**
+```bash
+cd client
+npm run dev
 ```
+- **Address to open:** `http://localhost:5173`
+- **Expected screen:** The Owner Sign-in screen appears. Enter the password `admin123` to connect to the live PostgreSQL database, or click **"Test in Demo Mode"** to bypass authentication with mock data.
 
-If ngrok is stored somewhere else, such as the `C:` drive, replace only the quoted path with its real location:
-
+### Exposing with ngrok (for Mobile APK or External Evaluators)
+In a third terminal, start an ngrok tunnel to port 3001:
 ```powershell
-& "C:\path\where\ngrok\is\saved\ngrok.exe" http 3001
+ngrok http 3001
 ```
+Copy the generated `https://....ngrok-free.dev` address into `client/.env` as `VITE_API_BASE_URL`, restart Vite, or build the Android APK.
 
-ngrok will show a line like `Forwarding https://example.ngrok-free.dev -> http://localhost:3001`. Copy the `https://...ngrok-free.dev` portion (do **not** include `-> http://localhost:3001`) into `client/.env` as `VITE_API_BASE_URL`, then restart the Vite client.
+---
 
-Free ngrok URLs can change whenever the tunnel restarts. Update `VITE_API_BASE_URL` each time it changes. For the Android app, run `npm run build`, `npx cap sync android`, and build/install a new APK after changing the URL so the new address is bundled into the app.
+## 4. Features and Usage
 
-For the deployed client to access the tunnel, `server/.env` must set `CORS_ORIGINS` to include both `http://localhost:5173` and `https://kevv1011.github.io`. Never commit `server/.env`; anyone running a downloaded copy needs their own Neon connection string.
+### Primary User Flow
+1. **Sign In / Mode Selection:** On opening the app, the owner enters their password to connect to the live database, or selects **"Test in Demo Mode"** for offline evaluation.
+2. **Dashboard & Low-Stock Alerts:** The top metric cards show inventory value, healthy stock counts, and critical low-stock warnings. Items below their minimum threshold are highlighted in red.
+3. **Inventory Management (`/inventory` & `/add-item`):** Browse, search, filter by category, and update product quantities using quick `+` and `-` controls. Click any item card to edit details or delete the product.
+4. **Point of Sale (POS) Quick Cart:** Click the cart icon to slide out the Quick Cart drawer. Add products to cart, enter cash tendered, see automatic change calculated, and click **"Complete Sale"** to deduct batch inventory atomically and generate a printable receipt.
+5. **Sales Analytics:** View seven-day revenue trends, daily sales totals, and the fastest-moving products.
+6. **Sign Out & Dark Mode:** Toggle between Dark and Light mode via the moon/sun button, or click **"Sign out"** to return to mode selection.
 
-## Environment variables
+### API Endpoints (Backend REST API)
 
-| Variable | Location | Description |
-|----------|----------|-------------|
-| `VITE_USE_MOCK_API` | `client/.env` | Set to `false` to connect to a real backend. |
-| `VITE_API_BASE_URL` | `client/.env` | Express API base URL (e.g., the active `https://…ngrok-free.dev` tunnel or `http://localhost:3001`). |
-| `DATABASE_URL` | `server/.env` | PostgreSQL connection string (e.g., `postgresql://user:pass@host/db`). |
+All protected endpoints require an `Authorization: Bearer <token>` header obtained from `/api/auth/login`.
 
-## Deploying
+| Method | Path | Auth Required | Description |
+| :--- | :--- | :---: | :--- |
+| `GET` | `/healthz` | No | Public health check returning server status (`{"status":"ok"}`). |
+| `POST` | `/api/auth/login` | No | Authenticates owner password using scrypt and returns a signed JWT. |
+| `GET` | `/api/items` | Yes | Retrieves all inventory products from PostgreSQL ordered by name. |
+| `POST` | `/api/items` | Yes | Creates a new inventory item with name, category, price, stock, and threshold. |
+| `PUT` | `/api/items/:id` | Yes | Updates an existing inventory item's details. |
+| `PATCH` | `/api/items/:id/stock` | Yes | Increments or decrements a single item's stock count. |
+| `DELETE` | `/api/items/:id` | Yes | Deletes an inventory item from the database. |
+| `POST` | `/api/upload` | Yes | Uploads a product image via Multer and returns the static asset path. |
+| `GET` | `/api/stats` | Yes | Returns aggregated stats (total inventory value, healthy count, low stock count). |
+| `GET` | `/api/transactions/recent` | Yes | Returns the 15 most recent sales transactions. |
+| `POST` | `/api/checkout` | Yes | Executes atomic batch stock deductions and logs the sale transaction. |
 
-- **Client:** The React frontend is deployed automatically to GitHub Pages using the `.github/workflows/deploy.yml` GitHub Actions pipeline. It defaults to self-contained Demo Mode for reliable evaluation.
-- **API:** The Express backend runs locally and can be exposed to the internet through an `ngrok` secure tunnel, connecting directly to the live Neon PostgreSQL database while the local process is running.
+---
 
-## Project structure
+## 5. Project Structure
 
 ```text
 TindahanTrack/
 ├── android/                    # Capacitor native Android wrapper
 ├── client/                     # React frontend (Vite)
-│   ├── public/                 # Static assets and screenshots
-│   ├── src/                    # Atomic components, pages, and App state
+│   ├── public/                 # Static assets, screenshots, and icons
+│   ├── src/                    
+│   │   ├── components/         # Atomic components (atoms, molecules, organisms)
+│   │   ├── pages/              # Routed views (Dashboard, Inventory, AddItem, Login)
+│   │   ├── lib/                # API client, demo mock data, and auth helpers
+│   │   ├── App.jsx             # Main router and state coordinator
+│   │   └── main.jsx            # React root mount
+│   ├── capacitor.config.json   # Capacitor Android build configuration
 │   └── vite.config.js          
 ├── server/                     # Express backend API
-│   ├── scripts/                # db-reset.js (schema setup & seeding)
-│   ├── app.js                  # Express API routes
+│   ├── scripts/                # Database migration and seed scripts (db-reset.js)
+│   ├── uploads/                # User-uploaded product photos
+│   ├── app.js                  # Express routes, middleware, and database pool
 │   └── package.json
-└── docs/                       # Course planning documents and weekly reports
+├── docs/                       # Course planning documents and weekly journals
+├── SECURITY-CHECKLIST.md       # Finals Week 2 security and privacy audit
+├── AI-USAGE.md                 # Full AI usage ledger and rubric documentation
+└── README.md                   # Project documentation and guide
 ```
 
-## Architecture
+---
 
-The React frontend owns UI state and route navigation. Its GitHub Pages deployment uses Demo Mode and stores inventory and transactions in browser `localStorage`, ensuring the app works independently for reviewers. In live mode, selected through `VITE_USE_MOCK_API=false`, the frontend sends REST requests to the local Express API on port 3001 through the configured ngrok tunnel; Express connects to Neon PostgreSQL.
+## 6. Screenshots
 
-## What I would do next
+### Desktop & Tablet View
+<div align="center">
+  <img src="client/public/web (1).png" alt="TindahanTrack Web Dashboard" width="700" style="margin-bottom: 12px; border-radius: 8px;" />
+  <br/>
+  <img src="client/public/web (2).png" alt="TindahanTrack Inventory & Quick Cart" width="700" style="margin-bottom: 12px; border-radius: 8px;" />
+</div>
 
-- Transition the backend from a local `ngrok` tunnel to a dedicated cloud host once platform availability stabilizes.
+### Mobile View (Android / Mobile Web)
+<div align="center">
+  <img src="client/public/app (1).png" alt="Mobile Dashboard" width="220" style="margin-right: 12px; border-radius: 8px;" />
+  <img src="client/public/app (2).png" alt="Mobile Quick Cart Drawer" width="220" style="margin-right: 12px; border-radius: 8px;" />
+  <img src="client/public/app (3).png" alt="Mobile POS Checkout" width="220" style="margin-right: 12px; border-radius: 8px;" />
+</div>
+
+---
+
+## 7. Known Issues and Next Steps
+
+### Known Issues & Tradeoffs
+1. **ngrok Free-Tier URLs:** In Live Mode, the local Express server is exposed via an ngrok free-tier tunnel. Free tunnel URLs change on every restart, requiring manual updates to `VITE_API_BASE_URL` in `client/.env`. The standalone Demo Mode eliminates this dependency for evaluators.
+2. **Image Upload Persistence in Ephemeral Environments:** Uploaded product images are stored locally in `server/uploads/`. If moved to serverless cloud environments without persistent volume mounts, cloud object storage (e.g., Cloudinary or AWS S3) will be required.
+
+### Next Steps (Post-Submission)
+- Deploy the Express API and PostgreSQL database to permanent cloud hosting (e.g., Render, Railway, or Fly.io) once platform stability is confirmed.
+- Implement barcode scanning via device camera using Capacitor plugins for instant item lookup.
+- Add receipt printing / SMS receipt sharing for customer convenience.
+
+---
+
+## AI Usage & Attribution
+
+This project was built with AI assistance using Google Antigravity Agent. All AI interactions, prompts, failure cases, and personal code attributions are documented in **[AI-USAGE.md](AI-USAGE.md)** in accordance with the course's finals badge rubric.
 
 ## Author & Licence
 
-Built by Kevin (@kevv1011) — HAU · 6APSI Final Project.
-MIT License.
+Built by **Kevin (@kevv1011)** — Holy Angel University · 6APSI Final Project.  
+Licensed under the [MIT License](LICENSE).

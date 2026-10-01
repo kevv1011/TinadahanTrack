@@ -82,7 +82,8 @@ const upload = multer({
 });
 
 // ── Middleware ────────────────────────────────────────────────────
-const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173').split(',');
+const defaultOrigins = 'http://localhost:5173,https://kevv1011.github.io,http://localhost:3000';
+const allowedOrigins = (process.env.CORS_ORIGINS || defaultOrigins).split(',').map(s => s.trim());
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
