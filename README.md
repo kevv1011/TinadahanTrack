@@ -5,6 +5,9 @@
   <p>A mobile-first inventory, stock management, and point-of-sale system designed specifically for neighborhood sari-sari store owners.</p>
 </div>
 
+[![Made with AI](https://img.shields.io/badge/Made_with-AI_assistance-blue)](AI-USAGE.md)  
+*This project was built with the assistance of Antigravity AI, which handled the bulk of the Express boilerplate and repetitive React component scaffolding.*
+
 **Live Site (Demo Mode):** [https://kevv1011.github.io/TinadahanTrack/](https://kevv1011.github.io/TinadahanTrack/)  
 **Live API Endpoint (Render Production):** [https://tinadahantrack.onrender.com/healthz](https://tinadahantrack.onrender.com/healthz)  
 **Demo Video:** *(link — to be added before finals)*  

@@ -77,12 +77,25 @@ graded as the finals badge, and it is worth 100 points.
 
 ## 3. Who wrote what
 
-### @kevv1011 (Written by me)
+### The Code I Wrote
 
-- **File:** `final-project-planning/01-proposal.md`, `02-wireframes.md`, `03-design-system.md`
-- **What it does and why it is built this way:** These markdown files represent the foundational logic, user stories, and design system of the entire app. I wrote the wireframes and color tokens by hand to ensure the final product actually looked and functioned like a premium tool tailored for Filipino sari-sari store owners, rather than a generic AI-generated template. 
+#### 1. The Design System and CSS Architecture
 
-### The AI-written part I understand best
+- **File:** `client/src/styles.css`
+- **Commit:** https://github.com/kevv1011/TinadahanTrack/commit/8d96937
+- **Explanation:** Created the core CSS custom properties (:root) that display the visual identity of the app. Set the exact color tags like the magenta primary and alert red, the 8px spacing scale and responsive media queries for screens more than than 768px. Instead of using a framework such as Tailwind or Bootstrap, I opted for a basic approach using vanilla CSS as the sari-sari store app should be extremely lightweight and vanilla CSS ensured high performance on lower end devices.
 
-- **File:** `client/src/App.jsx`
-- **What it does and why we kept it:** This file houses the `IS_DEMO` toggle logic (`import.meta.env.VITE_USE_MOCK_API`). It acts as a router for data, checking if it should fetch from the Express API or read/write to `localStorage`. We kept it because it brilliantly satisfies the grading requirement to have a working GitHub Pages deployment while still allowing for a real PostgreSQL backend when running locally.
+#### 2. The Sari-Sari Store Seed Data
+
+- **File:** `server/schema.sql` and `client/src/data/seed.js`
+- **Commit:** https://github.com/kevv1011/TinadahanTrack/commit/3fe2a86
+- **Explanation:** I created the realistic data seed (20 items) and schema constraints for the database. The inventory of real world sari-sari stores has been mapped with correct Philippe Peso prices, and realistic low stock thresholds triggers. This will guarantee that the app logic is in line with the actual domain of the end user.
+
+### The Code the AI Wrote
+
+#### 3. The Atomic POS Checkout Query
+
+- **File:** `server/app.js`
+- **Commit:** https://github.com/kevv1011/TinadahanTrack/commit/124cc32
+- **Explanation:** The checkout route (PATCH /api/items/batch-deduct) that handles batch stock deductions is written with Antigravity AI. It encapsulated the multi-item update in a PostgreSQL BEGIN ... COMMIT block. This code is important for database integrity reasons and if a store owner checks out 5 items, and the database crashes on the 5th item, the transaction will automatically roll back. This way, you can avoid selling off parts of your stock, and you won't let your stock numbers get out of sync.
+
