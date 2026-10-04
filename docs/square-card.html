@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TindahanTrack — 1080x1080 Social Media Presentation Card</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800;900&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0b0d11;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    .controls {
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      max-width: 1080px;
+    }
+
+    .screen-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.35rem 0.6rem;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .screen-btn {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      padding: 0.5rem 0.9rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .screen-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .screen-btn.active {
+      color: #fff;
+      background: #e91e63;
+    }
+
+    canvas {
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+      max-width: 90vw;
+      max-height: 80vh;
+      aspect-ratio: 1 / 1;
+      background: #0f1117;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <div class="screen-selector">
+      <span style="color: #9ca3af; font-size: 0.85rem; margin-left: 0.4rem;">Screen:</span>
+      <button class="screen-btn active" data-src="../client/public/web (2).png">📊 Dashboard</button>
+      <button class="screen-btn" data-src="../client/public/web (3).png">🛒 Inventory & POS</button>
+      <button class="screen-btn" data-src="../client/public/web (1).png">➕ Add Product</button>
+      <button class="screen-btn" data-src="../client/public/web (4).png">📈 Analytics</button>
+    </div>
+  </div>
+
+  <canvas id="cardCanvas" width="1080" height="1080"></canvas>
+
+  <script>
+    const canvas = document.getElementById('cardCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const logoImg = new Image();
+    logoImg.src = '../client/public/logo.png';
+
+    let currentScreenshotSrc = '../client/public/web (2).png';
+    const screenshotImg = new Image();
+    screenshotImg.src = currentScreenshotSrc;
+
+    let loaded = 0;
+    function tryDraw() {
+      loaded++;
+      if (loaded >= 2) {
+        drawCanvas();
+      }
+    }
+
+    logoImg.onload = tryDraw;
+    screenshotImg.onload = tryDraw;
+
+    // Fallback if cached or delayed
+    setTimeout(drawCanvas, 300);
+
+    function switchScreenshot(newSrc) {
+      currentScreenshotSrc = newSrc;
+      screenshotImg.src = newSrc;
+      if (screenshotImg.complete) {
+        drawCanvas();
+      } else {
+        screenshotImg.onload = drawCanvas;
+      }
+    }
+
+    document.querySelectorAll('.screen-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        switchScreenshot(btn.dataset.src);
+      });
+    });
+
+    function drawCanvas() {
+      ctx.clearRect(0, 0, 1080, 1080);
+
+      // 1. Clean Solid Dark Background (No Gradients)
+      ctx.fillStyle = '#0f1117';
+      ctx.fillRect(0, 0, 1080, 1080);
+
+      // 2. Header badge
+      ctx.fillStyle = 'rgba(233, 30, 99, 0.15)';
+      ctx.strokeStyle = '#e91e63';
+      ctx.lineWidth = 2;
+      roundRect(ctx, 75, 65, 340, 44, 22, true, true);
+
+      ctx.fillStyle = '#ff4081';
+      ctx.font = 'bold 18px "Outfit", sans-serif';
+      ctx.fillText('FINAL PROJECT SHOWCASE', 98, 93);
+
+      // 3. Logo & App Title
+      if (logoImg.complete && logoImg.naturalWidth > 0) {
+        ctx.save();
+        roundRect(ctx, 75, 135, 100, 100, 20, false, false);
+        ctx.clip();
+        ctx.drawImage(logoImg, 75, 135, 100, 100);
+        ctx.restore();
+      }
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 70px "Outfit", sans-serif';
+      ctx.fillText('TindahanTrack', 195, 200);
+
+      ctx.fillStyle = '#9ca3af';
+      ctx.font = '500 23px "Inter", sans-serif';
+      ctx.fillText('Smart Inventory & Point-of-Sale for Sari-Sari Stores', 198, 238);
+
+      // 4. App Screenshot (in stylish browser mockup frame)
+      const cardX = 75;
+      const cardY = 275;
+      const cardW = 930;
+      const cardH = 590;
+
+      // Card frame outer container
+      ctx.save();
+      roundRect(ctx, cardX, cardY, cardW, cardH, 20, false, false);
+      ctx.clip();
+
+      // Card background
+      ctx.fillStyle = '#11141c';
+      ctx.fillRect(cardX, cardY, cardW, cardH);
+
+      // Browser Header Bar
+      const barH = 42;
+      ctx.fillStyle = '#1c202c';
+      ctx.fillRect(cardX, cardY, cardW, barH);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cardX, cardY + barH);
+      ctx.lineTo(cardX + cardW, cardY + barH);
+      ctx.stroke();
+
+      // 3 Window control dots
+      const dotY = cardY + 21;
+      drawCircle(ctx, cardX + 22, dotY, 6, '#ef4444');
+      drawCircle(ctx, cardX + 40, dotY, 6, '#f59e0b');
+      drawCircle(ctx, cardX + 58, dotY, 6, '#10b981');
+
+      // Browser URL bar pill
+      const urlW = 380;
+      const urlH = 26;
+      const urlX = cardX + (cardW - urlW) / 2;
+      const urlY = cardY + 8;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+      roundRect(ctx, urlX, urlY, urlW, urlH, 13, true, false);
+
+      ctx.fillStyle = '#9ca3af';
+      ctx.font = '500 13px "Inter", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('https://kevv1011.github.io/TinadahanTrack/', cardX + (cardW / 2), urlY + 17);
+      ctx.textAlign = 'left';
+
+      // Screenshot image (aspect-fill with crop)
+      if (screenshotImg.complete && screenshotImg.naturalWidth > 0) {
+        const viewY = cardY + barH;
+        const viewH = cardH - barH;
+        const img = screenshotImg;
+        const targetAspect = cardW / viewH;
+        const imgAspect = img.naturalWidth / img.naturalHeight;
+
+        let sX = 0, sY = 0, sW = img.naturalWidth, sH = img.naturalHeight;
+        if (imgAspect > targetAspect) {
+          sW = img.naturalHeight * targetAspect;
+          sX = (img.naturalWidth - sW) / 2;
+        } else {
+          sH = img.naturalWidth / targetAspect;
+          sY = 0; // Anchor top so header/dashboard is prominent
+        }
+
+        ctx.drawImage(img, sX, sY, sW, sH, cardX, viewY, cardW, viewH);
+      }
+
+      ctx.restore();
+
+      // Card border
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 2;
+      roundRect(ctx, cardX, cardY, cardW, cardH, 20, false, true);
+
+      // 5. Footer Section (Perfect Alignment: Left Author, Right Tech Badges)
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 28px "Outfit", sans-serif';
+      ctx.fillText('Kevin (@kevv1011)', 75, 952);
+
+      ctx.fillStyle = '#9ca3af';
+      ctx.font = '500 17px "Inter", sans-serif';
+      ctx.fillText('Holy Angel University · 6APSI Web Dev Final Project', 75, 985);
+
+      // Tech Pills aligned to the right edge (1005px) dynamically with zero overlap
+      drawFooterBadges(ctx, 1005, 962);
+    }
+
+    function drawFooterBadges(ctx, startRightX, centerY) {
+      const badges = [
+        { text: 'Full-Stack JS', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
+        { text: 'React + Express', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
+        { text: 'PostgreSQL', color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.1)' }
+      ];
+
+      ctx.font = 'bold 16px "Inter", sans-serif';
+      let curRight = startRightX;
+      const gap = 12;
+      const pillH = 36;
+
+      badges.forEach(badge => {
+        const textW = ctx.measureText(badge.text).width;
+        const pillW = textW + 26;
+        const pillX = curRight - pillW;
+        const pillY = centerY - (pillH / 2);
+
+        // Pill background & border
+        ctx.fillStyle = badge.bg;
+        ctx.strokeStyle = badge.color;
+        ctx.lineWidth = 1.5;
+        roundRect(ctx, pillX, pillY, pillW, pillH, 18, true, true);
+
+        // Pill text
+        ctx.fillStyle = badge.color;
+        ctx.fillText(badge.text, pillX + 13, centerY + 5);
+
+        // Move cursor for next badge (right-to-left)
+        curRight = pillX - gap;
+      });
+    }
+
+    function drawCircle(ctx, x, y, r, color) {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    }
+  </script>
+</body>
+</html>
